@@ -1,17 +1,17 @@
 export type DiagramId =
   | "whole"
-  | "paradigm"
-  | "see-do-get"
-  | "habit-def"
-  | "maturity"
-  | "ppc"
-  | "circles"
-  | "matrix"
-  | "centers"
-  | "bank"
-  | "listen"
-  | "synergy"
-  | "saw";
+  | "loop"
+  | "orders"
+  | "machine"
+  | "five"
+  | "barriers"
+  | "triangle"
+  | "brains"
+  | "ev"
+  | "culture"
+  | "weight"
+  | "who"
+  | "gov";
 
 export type EssenceBlock = {
   heading: string;
@@ -25,15 +25,17 @@ export type EssenceBlock = {
   };
 };
 
+export type StripKind = "life" | "work";
+
 export type Chapter = {
   slug: string;
-  group: "读之前" | "原书的地基" | "个人的胜利" | "公众的胜利" | "更新与收束";
+  group: "读之前" | "原则从哪来" | "生活原则" | "工作原则" | "写成自己的";
   navLabel: string;
   eyebrow: string;
   title: string;
   bookRef: string;
   lead: string;
-  habit?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  strip?: { kind: StripKind; index: number };
   place?: string;
   essenceIntro: string;
   essence: EssenceBlock[];
@@ -50,8 +52,12 @@ export type Chapter = {
 
 export const GROUP_ORDER = [
   "读之前",
-  "原书的地基",
-  "个人的胜利",
-  "公众的胜利",
-  "更新与收束",
+  "原则从哪来",
+  "生活原则",
+  "工作原则",
+  "写成自己的",
 ] as const;
+
+export const LIFE_NAMES = ["拥抱现实", "五步流程", "极度开放", "了解差异", "做决定"] as const;
+
+export const WORK_NAMES = ["求真透明", "可信度加权", "选对人", "操作机器"] as const;

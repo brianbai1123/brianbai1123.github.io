@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="text-sm font-semibold text-clay">这条路没有这一站</p>
       <h1 className="mt-3 font-serif text-4xl text-ink">页面不存在</h1>
       <p className="mt-4 leading-relaxed text-muted">
-        目录从整张地图开始，顺着原书走到习惯七，再收束。
+        目录从整张地图开始，顺着原书走过生活原则和工作原则，再收成你自己的原则。
       </p>
       <Link href="/" className={`${buttonVariants()} mt-8 w-fit`}>
         回到开篇

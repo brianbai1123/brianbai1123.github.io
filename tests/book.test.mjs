@@ -1,32 +1,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { chapters, chapterGroups, GROUP_ORDER } from "../src/content/book.ts";
-
-const HABITS = [
-  "积极主动",
-  "以终为始",
-  "要事第一",
-  "双赢思维",
-  "知彼解己",
-  "统合综效",
-  "不断更新",
-];
+import { chapters, chapterGroups, GROUP_ORDER, LIFE_NAMES, WORK_NAMES } from "../src/content/book.ts";
 
 test("stations follow the book, then a closing synthesis", () => {
   assert.deepEqual(
     chapters.map((chapter) => chapter.slug),
     [
       "start",
-      "foundation",
-      "path",
-      "habit-1",
-      "habit-2",
-      "habit-3",
-      "habit-4",
-      "habit-5",
-      "habit-6",
-      "habit-7",
+      "origin",
+      "reality",
+      "five-steps",
+      "open-mind",
+      "wired",
+      "decide",
+      "culture",
+      "weight",
+      "people",
+      "machine",
       "together",
     ],
   );
@@ -53,24 +44,27 @@ test("every station has both layers and the five-step reread", () => {
   }
 });
 
-test("seven habits keep the book's names and private-before-public order", () => {
-  const habits = chapters.filter((chapter) => chapter.habit);
+test("life and work principles keep the book's order", () => {
+  const life = chapters.filter((chapter) => chapter.strip?.kind === "life");
+  const work = chapters.filter((chapter) => chapter.strip?.kind === "work");
   assert.deepEqual(
-    habits.map((chapter) => chapter.title),
-    HABITS,
+    life.map((chapter) => chapter.strip?.index),
+    [1, 2, 3, 4, 5],
   );
   assert.deepEqual(
-    habits.map((chapter) => chapter.habit),
-    [1, 2, 3, 4, 5, 6, 7],
+    life.map((chapter) => chapter.navLabel),
+    [...LIFE_NAMES],
   );
   assert.deepEqual(
-    habits.slice(0, 3).map((chapter) => chapter.group),
-    ["个人的胜利", "个人的胜利", "个人的胜利"],
+    work.map((chapter) => chapter.strip?.index),
+    [1, 2, 3, 4],
   );
   assert.deepEqual(
-    habits.slice(3, 6).map((chapter) => chapter.group),
-    ["公众的胜利", "公众的胜利", "公众的胜利"],
+    work.map((chapter) => chapter.navLabel),
+    [...WORK_NAMES],
   );
+  assert.ok(life.every((chapter) => chapter.group === "生活原则"));
+  assert.ok(work.every((chapter) => chapter.group === "工作原则"));
 });
 
 test("navigation groups cover every station once", () => {

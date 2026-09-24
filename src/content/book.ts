@@ -1,18 +1,14 @@
-import { ground } from "./ground";
-import { privateVictory } from "./private-victory";
-import { publicVictory } from "./public-victory";
-import { renewal } from "./renewal";
+import { close } from "./close";
+import { life } from "./life";
+import { map } from "./map";
+import { origin } from "./origin";
 import { GROUP_ORDER, type Chapter } from "./types";
+import { work } from "./work";
 
-export type { Chapter, DiagramId, EssenceBlock } from "./types";
-export { GROUP_ORDER } from "./types";
+export type { Chapter, DiagramId, EssenceBlock, StripKind } from "./types";
+export { GROUP_ORDER, LIFE_NAMES, WORK_NAMES } from "./types";
 
-export const chapters: Chapter[] = [
-  ...ground,
-  ...privateVictory,
-  ...publicVictory,
-  ...renewal,
-];
+export const chapters: Chapter[] = [...map, ...origin, ...life, ...work, ...close];
 
 export function findChapter(slug: string) {
   return chapters.find((chapter) => chapter.slug === slug);

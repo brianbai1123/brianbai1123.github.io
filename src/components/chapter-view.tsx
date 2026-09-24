@@ -1,20 +1,10 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { chapterHref, locate, type Chapter } from "@/content/book";
+import { chapterHref, LIFE_NAMES, locate, WORK_NAMES, type Chapter } from "@/content/book";
 import { Diagram } from "@/components/diagrams";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const HABIT_NAMES = [
-  "积极主动",
-  "以终为始",
-  "要事第一",
-  "双赢思维",
-  "知彼解己",
-  "统合综效",
-  "不断更新",
-];
 
 export function ChapterView({ chapter }: { chapter: Chapter }) {
   const { index, total, prev, next } = locate(chapter.slug);
@@ -31,7 +21,9 @@ export function ChapterView({ chapter }: { chapter: Chapter }) {
       </h1>
       <p className="mt-4 text-sm leading-relaxed text-muted">{chapter.bookRef}</p>
       <p className="mt-6 text-lg leading-relaxed text-ink">{chapter.lead}</p>
-      {chapter.habit ? <HabitStrip current={chapter.habit} /> : null}
+      {chapter.strip ? (
+        <PrincipleStrip kind={chapter.strip.kind} current={chapter.strip.index} />
+      ) : null}
       {chapter.place ? (
         <p className="mt-4 border-l-2 border-pine pl-4 text-sm leading-relaxed text-pine">
           {chapter.place}
@@ -204,18 +196,20 @@ export function ChapterView({ chapter }: { chapter: Chapter }) {
       </nav>
 
       <footer className="mt-16 text-sm leading-relaxed text-muted">
-        这是一份独立导读，用自己的话重述史蒂芬·柯维《高效能人士的七个习惯》的思想框架，不是原书的替代，也与 FranklinCovey 没有隶属关系。完整的论证、故事和练习，去读原书。
+        这是一份独立导读，用自己的话重述瑞·达利欧《原则》的思想框架，不是原书的替代，也与作者及桥水没有隶属关系。完整的论证、经历和细目，去读原书。
       </footer>
     </article>
   );
 }
 
-function HabitStrip({ current }: { current: number }) {
+function PrincipleStrip({ kind, current }: { kind: "life" | "work"; current: number }) {
+  const names = kind === "life" ? LIFE_NAMES : WORK_NAMES;
+  const band = kind === "life" ? "生活" : "工作";
   return (
-    <ol className="mt-8 flex gap-2 overflow-x-auto pb-1" aria-label="七个习惯的位置">
-      {HABIT_NAMES.map((name, habitIndex) => {
-        const habit = habitIndex + 1;
-        const active = habit === current;
+    <ol className="mt-8 flex gap-2 overflow-x-auto pb-1" aria-label={kind === "life" ? "生活原则的位置" : "工作原则的位置"}>
+      {names.map((name, nameIndex) => {
+        const index = nameIndex + 1;
+        const active = index === current;
         return (
           <li
             key={name}
@@ -225,9 +219,9 @@ function HabitStrip({ current }: { current: number }) {
                 : "min-w-28 border border-line px-3 py-2 text-muted"
             }
           >
-            <span className="block text-xs">{habit <= 3 ? "个人" : habit <= 6 ? "公众" : "更新"}</span>
+            <span className="block text-xs">{band}</span>
             <span className={active ? "text-sm font-semibold" : "text-sm"}>
-              {habit}. {name}
+              {index}. {name}
             </span>
           </li>
         );
