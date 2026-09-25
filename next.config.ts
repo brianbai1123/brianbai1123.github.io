@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
-/** 与 GitHub 仓库名一致 → https://brianbai1123.github.io/ep/ */
-const repo = "ep";
-const isGhPages = process.env.GITHUB_PAGES === "true";
-
+/** 用户站，发布在 https://brianbai1123.github.io/ 根路径 */
 const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "127.0.0.1",
@@ -20,8 +17,6 @@ const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
   trailingSlash: true,
-  basePath: isGhPages ? `/${repo}` : "",
-  assetPrefix: isGhPages ? `/${repo}/` : undefined,
 };
 
 export default nextConfig;
