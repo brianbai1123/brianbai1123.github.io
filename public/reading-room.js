@@ -51,10 +51,35 @@
     document.body.appendChild(aside);
   }
 
+  function homeButton() {
+    if (location.pathname === "/" || document.querySelector("[data-reading-room-home]")) return;
+    var link = document.createElement("a");
+    link.href = "https://brianbai1123.github.io/";
+    link.setAttribute("data-reading-room-home", "");
+    link.textContent = "← 回到藏书室";
+    link.style.cssText = [
+      "position:fixed",
+      "z-index:80",
+      "left:16px",
+      "bottom:16px",
+      "padding:10px 14px",
+      "border-radius:999px",
+      "background:#1c3d36",
+      "color:#f7f3eb",
+      "font:600 14px/1.2 'Noto Sans SC',sans-serif",
+      "text-decoration:none",
+      "box-shadow:0 8px 24px rgba(28,25,22,.18)",
+    ].join(";");
+    document.body.appendChild(link);
+  }
+
   function tick() {
     remember();
+    homeButton();
     show();
   }
+
+  homeButton();
 
   fetch("/crosslinks.json")
     .then(function (response) {
