@@ -3,9 +3,9 @@
 :root {
   --background: #f3efe6;
   --foreground: #1c1916;
-  --pine: #1a3654;
-  --pine-soft: #e4eef4;
-  --clay: #8d4e28;
+  --pine: #1c3d36;
+  --pine-soft: #e5f0eb;
+  --clay: #8a4b32;
   --band: #efe4d2;
   --line: #e0d5c4;
   --muted: #5c554c;
@@ -43,5 +43,5 @@ body {
 }
 
 ::selection {
-  background: #d5e4ee;
+  background: #d7ebe3;
 }

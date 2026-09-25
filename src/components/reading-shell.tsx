@@ -24,9 +24,9 @@ export function ReadingShell({
       <aside className="border-b border-line bg-paper lg:sticky lg:top-0 lg:h-svh lg:overflow-y-auto lg:border-r lg:border-b-0">
         <div className="px-5 py-6">
           <Link href="/" className="block">
-            <p className="font-serif text-2xl text-pine">原则</p>
+            <p className="font-serif text-2xl text-pine">进化心理学</p>
             <p className="mt-1 text-sm leading-relaxed text-muted">
-              把瑞·达利欧的《原则》按原书的路讲清楚
+              把戴维·巴斯的《进化心理学》按原书的路讲清楚
             </p>
           </Link>
         </div>

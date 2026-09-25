@@ -1,28 +1,25 @@
 import type { DiagramId } from "@/content/types";
 
 const captions: Record<DiagramId, string> = {
-  whole: "原书的顺序：先看原则从哪来，再用于自己的生活，然后才是一群人一起做事。",
-  loop: "疼只是信号。中间若没有反省，人会重复，或者只会躲。",
-  orders: "第一眼的舒服，常常和后面的结果是反的。",
-  machine: "上面的你负责看设计，下面的你负责做事。两个角色搅在一起，就没法改。",
-  five: "五步按这个顺序走。目标和问题、诊断和动手，不要挤在同一次情绪里。",
-  barriers: "自我把反对听成攻击。盲点让你根本看不见那一块。",
-  triangle: "再找一个做成过、又肯反对你的人。人数本身不会产生真相。",
-  brains: "压力一大，自动的那一层会抢走方向盘。决定要提前移出那个场面。",
-  ev: "不只问最可能怎样，还要问：如果错了，有多贵。",
-  culture: "三样少一样，另外两样就会变味。",
-  weight: "分量针对这一件事：做成过，并且讲得出因果。",
-  who: "先有目标和角色，再看人配不配。不要先把关系安排舒服。",
-  gov: "原则要留在工具里，并且在负责人看错时仍能被叫停。",
+  whole: "原书按人要解决的问题分编：先打地基，再谈生存、择偶、亲属和群居。",
+  levels: "近因解释这一次怎么发生。远因解释这种心理为什么会被留下来。",
+  selection: "三条选择回答不同的「为什么会留下来」。后面各章会分别用到它们。",
+  fallacy: "能解释来历，不等于今天应当如此，也不等于今天仍然有益。",
+  survival: "警报偏向误报。漏掉一次真正的危险，往往没有下次。",
+  women: "长期关系里被抬高的，是还能不能稳定付出、愿不愿意付出。",
+  men: "相对权重不同。善良和智力仍在双方共同的高位。",
+  strategies: "时间尺度一变，被看重的线索就换一套。换套不是推荐。",
+  parent: "利益大部分重合，所以有照料。不完全重合，所以会有冲突。",
+  kin: "重叠越多，同一笔高代价的帮助越容易被接受。",
+  recip: "非亲之间要记得住账，发现白占便宜就停下，对方改了还可以恢复。",
+  status: "靠恐惧的服从会散。靠钦佩的跟随可以被撤回，也可以长久。",
 };
 
 export function Diagram({ id }: { id: DiagramId }) {
   return (
     <figure className="my-8 border-y border-line bg-paper/80 py-5">
       <div className="px-1">{renderDiagram(id)}</div>
-      <figcaption className="mt-4 text-sm leading-relaxed text-muted">
-        {captions[id]}
-      </figcaption>
+      <figcaption className="mt-4 text-sm leading-relaxed text-muted">{captions[id]}</figcaption>
     </figure>
   );
 }
@@ -33,10 +30,10 @@ function renderDiagram(id: DiagramId) {
       return (
         <ol className="space-y-3">
           {[
-            ["1", "从哪里来", "原则是被打疼、再反省之后写下来的"],
-            ["2", "生活原则", "现实、五步、开放、差异、决定"],
-            ["3", "工作原则", "文化、可信度、对人、机器"],
-            ["4", "写成自己的", "拿去试，失效了就改"],
+            ["1", "地基", "选择如何塑造心理机制，假设怎样被检验"],
+            ["2", "生存", "食物、居所、危险和宁可误报的警报"],
+            ["3", "择偶", "长期与短期的不同权重"],
+            ["4", "亲属与群居", "抚育、亲缘、合作、攻击、冲突、地位"],
           ].map(([n, title, text]) => (
             <li key={n} className="grid grid-cols-[2rem_1fr] gap-3">
               <span className="font-serif text-lg text-clay">{n}</span>
@@ -48,13 +45,54 @@ function renderDiagram(id: DiagramId) {
           ))}
         </ol>
       );
-    case "loop":
+    case "levels":
+      return (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="text-sm font-semibold text-pine">近因</p>
+            <p className="mt-1 text-sm leading-relaxed">激素、学习、规范、这一次的情境。</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-pine">远因</p>
+            <p className="mt-1 text-sm leading-relaxed">这种心理在反复出现的问题里为什么会被留下。</p>
+          </div>
+        </div>
+      );
+    case "selection":
+      return (
+        <ul className="grid gap-3 sm:grid-cols-3">
+          {[
+            ["自然选择", "有助于活下来并留下后代"],
+            ["性选择", "有助于获得配偶"],
+            ["亲缘选择", "帮助到重叠的基因"],
+          ].map(([title, text]) => (
+            <li key={title} className="border-l-2 border-pine pl-3">
+              <p className="font-semibold">{title}</p>
+              <p className="mt-1 text-sm text-muted">{text}</p>
+            </li>
+          ))}
+        </ul>
+      );
+    case "fallacy":
+      return (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="font-semibold text-pine">可以说</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">这种反应可能来自旧问题，并且今天会失配。</p>
+          </div>
+          <div>
+            <p className="font-semibold text-clay">不能说</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">所以应当如此，或者所以不该改变。</p>
+          </div>
+        </div>
+      );
+    case "survival":
       return (
         <ol className="grid gap-3 sm:grid-cols-3">
           {[
-            ["痛苦", "结果打到你身上"],
-            ["反省", "哪个看法错了，哪一处设计要改"],
-            ["进步", "写成下一次用得上的做法"],
+            ["食物", "甜、脂肪、盐；避开可能的毒物"],
+            ["居所", "能看见，也有地方可躲"],
+            ["警报", "宁可把塑料袋当成蛇"],
           ].map(([title, text], index) => (
             <li key={title}>
               <p className="font-serif text-lg text-pine">
@@ -65,142 +103,82 @@ function renderDiagram(id: DiagramId) {
           ))}
         </ol>
       );
-    case "orders":
+    case "women":
       return (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <ul className="grid gap-3 sm:grid-cols-3">
           {[
-            ["第一眼", "现在很轻松，或现在很费劲"],
-            ["第二步", "明天的状态、别人的信任"],
-            ["第三步", "这件事还会不会再来"],
+            ["资源", "以后还付不付得起"],
+            ["可靠", "付出会不会突然停"],
+            ["善意", "愿不愿意用在家里"],
           ].map(([title, text]) => (
-            <div key={title} className="border-l-2 border-pine pl-3">
+            <li key={title} className="border-l-2 border-pine pl-3">
               <p className="font-semibold">{title}</p>
               <p className="mt-1 text-sm text-muted">{text}</p>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       );
-    case "machine":
+    case "men":
       return (
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-sm font-semibold text-pine">上面的你 · 设计者</p>
-            <p className="mt-1 text-sm leading-relaxed">看输入、流程和输出，决定改哪一个零件。</p>
+            <p className="font-semibold text-pine">共同的高位</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">善良、智力、让人愿意长期相处的性格。</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-pine">里面的你 · 执行者</p>
-            <p className="mt-1 text-sm leading-relaxed">按设计做事，不在做事的同时替自己辩护。</p>
+            <p className="font-semibold text-pine">相对更靠前的线索</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">年龄与健康的线索，以及长期关系里的忠诚。</p>
           </div>
         </div>
       );
-    case "five":
+    case "strategies":
+      return (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="font-serif text-xl text-pine">长期</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">多年的投入、合作和养育。承诺本身就是要被检验的线索。</p>
+          </div>
+          <div>
+            <p className="font-serif text-xl text-pine">短期</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">低承诺下的另一套权重。研究它，不是推荐它。</p>
+          </div>
+        </div>
+      );
+    case "parent":
+      return (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="font-semibold text-pine">重合的部分</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">孩子活得好，父母的遗传利益也在。所以会有照料。</p>
+          </div>
+          <div>
+            <p className="font-semibold text-clay">错开的部分</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">资源要分给其他孩子和父母自己的生活。所以会争。</p>
+          </div>
+        </div>
+      );
+    case "kin":
       return (
         <ol className="space-y-2">
-          {["明确目标", "发现并不容忍问题", "诊断到根上", "把方案设计成能演的电影", "推进到做完"].map(
-            (step, index) => (
-              <li key={step} className="grid grid-cols-[2rem_1fr] gap-2 text-sm">
-                <span className="font-serif text-lg text-clay">{index + 1}</span>
-                <span className="self-center">{step}</span>
-              </li>
-            ),
-          )}
+          {[
+            ["子女、全同胞", "重叠最多，高代价帮助最容易"],
+            ["孙子女、半同胞", "重叠下降，同样的代价更挑剔"],
+            ["更远的亲属", "低代价可以，高代价常常要另找理由"],
+          ].map(([title, text]) => (
+            <li key={title} className="grid grid-cols-[7.5rem_1fr] gap-3 text-sm">
+              <span className="font-semibold text-pine">{title}</span>
+              <span className="text-muted">{text}</span>
+            </li>
+          ))}
         </ol>
       );
-    case "barriers":
-      return (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="font-semibold text-clay">自我</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">看法被挑战时，人开始保卫自己，不再核对事实。</p>
-          </div>
-          <div>
-            <p className="font-semibold text-clay">盲点</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">有一块你结构性看不见。不靠别人指出，它会留在原处。</p>
-          </div>
-        </div>
-      );
-    case "triangle":
-      return (
-        <ul className="grid gap-3 sm:grid-cols-3">
-          {[
-            ["你的看法", "先说清推理"],
-            ["对方的看法", "复述到对方认可"],
-            ["可信的第三者", "做成过，并且肯反对"],
-          ].map(([title, text]) => (
-            <li key={title} className="border-l-2 border-pine pl-3">
-              <p className="font-semibold">{title}</p>
-              <p className="mt-1 text-sm text-muted">{text}</p>
-            </li>
-          ))}
-        </ul>
-      );
-    case "brains":
-      return (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="font-serif text-xl text-pine">自动的一层</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">快，保护面子，压力一大就抢方向盘。</p>
-          </div>
-          <div>
-            <p className="font-serif text-xl text-pine">能想步骤的一层</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">慢，负责权衡。要在被抢走之前把决定写好。</p>
-          </div>
-        </div>
-      );
-    case "ev":
-      return (
-        <div className="grid grid-cols-2 gap-px bg-line text-sm">
-          <div className="bg-paper px-3 py-2 font-semibold">看什么</div>
-          <div className="bg-paper px-3 py-2 font-semibold">不只要看什么</div>
-          <div className="bg-pine-soft px-3 py-3 leading-relaxed text-pine">
-            几种结果各自的可能性，以及错了以后有多贵。
-          </div>
-          <div className="bg-paper px-3 py-3 leading-relaxed">只看最像会发生的那一个，然后用感觉拍板。</div>
-        </div>
-      );
-    case "culture":
-      return (
-        <ul className="grid gap-3 sm:grid-cols-3">
-          {[
-            ["极度求真", "把看法说准"],
-            ["极度透明", "让相关的人看见依据"],
-            ["可信度加权", "听完以后知道听谁"],
-          ].map(([title, text]) => (
-            <li key={title} className="border-l-2 border-pine pl-3">
-              <p className="font-semibold">{title}</p>
-              <p className="mt-1 text-sm text-muted">{text}</p>
-            </li>
-          ))}
-        </ul>
-      );
-    case "weight":
-      return (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="font-semibold text-pine">加重</p>
-            <ul className="mt-2 space-y-1 text-sm leading-relaxed">
-              <li>这类事反复做成过</li>
-              <li>讲得出成与败的因果</li>
-              <li>肯不同意你</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-semibold text-clay">不自动加重</p>
-            <ul className="mt-2 space-y-1 text-sm leading-relaxed">
-              <li>职位和辈分</li>
-              <li>声音和关系</li>
-              <li>和你结论相同的人数</li>
-            </ul>
-          </div>
-        </div>
-      );
-    case "who":
+    case "recip":
       return (
         <ol className="grid gap-3 sm:grid-cols-3">
           {[
-            ["目标", "要产出什么"],
-            ["角色", "这一步需要什么"],
-            ["人", "价值观、能力、技能配不配"],
+            ["先合作", "给一次值得记住的帮助"],
+            ["记下账", "识别对方，发现只拿不还"],
+            ["可恢复", "停下之后，对方改了还可以继续"],
           ].map(([title, text], index) => (
             <li key={title}>
               <p className="font-serif text-lg text-pine">
@@ -211,16 +189,16 @@ function renderDiagram(id: DiagramId) {
           ))}
         </ol>
       );
-    case "gov":
+    case "status":
       return (
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="font-semibold text-pine">工具</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">问题清单、角色说明、做决定前的必问题。用来减少看心情。</p>
+            <p className="font-semibold text-clay">支配</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">别人因为难堪或代价而服从。压力一停，服从就散。</p>
           </div>
           <div>
-            <p className="font-semibold text-pine">治理</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">任何人，包括负责人，看错时都能被叫停和复查。</p>
+            <p className="font-semibold text-pine">声望</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">别人因为能力和可靠而自愿跟随，也可以撤回。</p>
           </div>
         </div>
       );

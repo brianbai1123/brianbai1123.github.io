@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { chapterHref, LIFE_NAMES, locate, WORK_NAMES, type Chapter } from "@/content/book";
+import { chapterHref, locate, STRIPS, type Chapter, type StripKind } from "@/content/book";
 import { Diagram } from "@/components/diagrams";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -196,18 +196,17 @@ export function ChapterView({ chapter }: { chapter: Chapter }) {
       </nav>
 
       <footer className="mt-16 text-sm leading-relaxed text-muted">
-        这是一份独立导读，用自己的话重述瑞·达利欧《原则》的思想框架，不是原书的替代，也与作者及桥水没有隶属关系。完整的论证、经历和细目，去读原书。
+        这是一份独立导读，用自己的话重述戴维·巴斯《进化心理学：心理的新科学》的框架，不是原书的替代，也与作者及出版社没有隶属关系。完整的论证、数据和研究争议，去读原书。解释不是许可。
       </footer>
     </article>
   );
 }
 
-function PrincipleStrip({ kind, current }: { kind: "life" | "work"; current: number }) {
-  const names = kind === "life" ? LIFE_NAMES : WORK_NAMES;
-  const band = kind === "life" ? "生活" : "工作";
+function PrincipleStrip({ kind, current }: { kind: StripKind; current: number }) {
+  const strip = STRIPS[kind];
   return (
-    <ol className="mt-8 flex gap-2 overflow-x-auto pb-1" aria-label={kind === "life" ? "生活原则的位置" : "工作原则的位置"}>
-      {names.map((name, nameIndex) => {
+    <ol className="mt-8 flex gap-2 overflow-x-auto pb-1" aria-label={`${strip.band}的位置`}>
+      {strip.names.map((name, nameIndex) => {
         const index = nameIndex + 1;
         const active = index === current;
         return (
@@ -219,7 +218,7 @@ function PrincipleStrip({ kind, current }: { kind: "life" | "work"; current: num
                 : "min-w-28 border border-line px-3 py-2 text-muted"
             }
           >
-            <span className="block text-xs">{band}</span>
+            <span className="block text-xs">{strip.band}</span>
             <span className={active ? "text-sm font-semibold" : "text-sm"}>
               {index}. {name}
             </span>

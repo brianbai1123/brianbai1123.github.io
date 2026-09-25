@@ -1,17 +1,16 @@
 export type DiagramId =
   | "whole"
-  | "loop"
-  | "orders"
-  | "machine"
-  | "five"
-  | "barriers"
-  | "triangle"
-  | "brains"
-  | "ev"
-  | "culture"
-  | "weight"
-  | "who"
-  | "gov";
+  | "levels"
+  | "selection"
+  | "fallacy"
+  | "survival"
+  | "women"
+  | "men"
+  | "strategies"
+  | "parent"
+  | "kin"
+  | "recip"
+  | "status";
 
 export type EssenceBlock = {
   heading: string;
@@ -25,11 +24,11 @@ export type EssenceBlock = {
   };
 };
 
-export type StripKind = "life" | "work";
+export type StripKind = "mating" | "family" | "group";
 
 export type Chapter = {
   slug: string;
-  group: "读之前" | "原则从哪来" | "生活原则" | "工作原则" | "写成自己的";
+  group: "读之前" | "地基" | "生存" | "择偶" | "养育与亲属" | "群居" | "收束";
   navLabel: string;
   eyebrow: string;
   title: string;
@@ -52,12 +51,16 @@ export type Chapter = {
 
 export const GROUP_ORDER = [
   "读之前",
-  "原则从哪来",
-  "生活原则",
-  "工作原则",
-  "写成自己的",
+  "地基",
+  "生存",
+  "择偶",
+  "养育与亲属",
+  "群居",
+  "收束",
 ] as const;
 
-export const LIFE_NAMES = ["拥抱现实", "五步流程", "极度开放", "了解差异", "做决定"] as const;
-
-export const WORK_NAMES = ["求真透明", "可信度加权", "选对人", "操作机器"] as const;
+export const STRIPS: Record<StripKind, { band: string; names: readonly string[] }> = {
+  mating: { band: "择偶", names: ["女性长期", "男性长期", "短期"] },
+  family: { band: "亲属", names: ["抚育", "亲属"] },
+  group: { band: "群居", names: ["合作", "攻击", "冲突", "地位"] },
+};

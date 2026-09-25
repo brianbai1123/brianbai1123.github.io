@@ -1,23 +1,24 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { chapters, chapterGroups, GROUP_ORDER, LIFE_NAMES, WORK_NAMES } from "../src/content/book.ts";
+import { chapters, chapterGroups, GROUP_ORDER, STRIPS } from "../src/content/book.ts";
 
 test("stations follow the book, then a closing synthesis", () => {
   assert.deepEqual(
     chapters.map((chapter) => chapter.slug),
     [
       "start",
-      "origin",
-      "reality",
-      "five-steps",
-      "open-mind",
-      "wired",
-      "decide",
-      "culture",
-      "weight",
-      "people",
-      "machine",
+      "foundation",
+      "survival",
+      "women",
+      "men",
+      "short-term",
+      "parenting",
+      "kinship",
+      "cooperate",
+      "aggression",
+      "conflict",
+      "status",
       "together",
     ],
   );
@@ -44,27 +45,20 @@ test("every station has both layers and the five-step reread", () => {
   }
 });
 
-test("life and work principles keep the book's order", () => {
-  const life = chapters.filter((chapter) => chapter.strip?.kind === "life");
-  const work = chapters.filter((chapter) => chapter.strip?.kind === "work");
-  assert.deepEqual(
-    life.map((chapter) => chapter.strip?.index),
-    [1, 2, 3, 4, 5],
-  );
-  assert.deepEqual(
-    life.map((chapter) => chapter.navLabel),
-    [...LIFE_NAMES],
-  );
-  assert.deepEqual(
-    work.map((chapter) => chapter.strip?.index),
-    [1, 2, 3, 4],
-  );
-  assert.deepEqual(
-    work.map((chapter) => chapter.navLabel),
-    [...WORK_NAMES],
-  );
-  assert.ok(life.every((chapter) => chapter.group === "生活原则"));
-  assert.ok(work.every((chapter) => chapter.group === "工作原则"));
+test("mating, family, and group strips keep the book's order", () => {
+  for (const kind of ["mating", "family", "group"]) {
+    const group = chapters.filter((chapter) => chapter.strip?.kind === kind);
+    assert.deepEqual(
+      group.map((chapter) => chapter.strip?.index),
+      STRIPS[kind].names.map((_, index) => index + 1),
+      kind,
+    );
+    assert.deepEqual(
+      group.map((chapter) => chapter.navLabel),
+      [...STRIPS[kind].names],
+      kind,
+    );
+  }
 });
 
 test("navigation groups cover every station once", () => {

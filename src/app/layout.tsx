@@ -20,11 +20,11 @@ const serif = Noto_Serif_SC({
 
 export const metadata: Metadata = {
   title: {
-    default: "原则",
-    template: "%s · 原则",
+    default: "进化心理学",
+    template: "%s · 进化心理学",
   },
   description:
-    "按瑞·达利欧《原则》原书的顺序，先讲清每一站的精华，再用中学生能跟上的五步重讲一遍。",
+    "按戴维·巴斯《进化心理学》原书的顺序，先讲清每一站的精华，再用中学生能跟上的五步重讲一遍。",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

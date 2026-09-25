@@ -1,14 +1,24 @@
 import { close } from "./close";
-import { life } from "./life";
+import { family } from "./family";
+import { foundation } from "./foundation";
+import { group } from "./group";
 import { map } from "./map";
-import { origin } from "./origin";
+import { mating } from "./mating";
+import { survival } from "./survival";
 import { GROUP_ORDER, type Chapter } from "./types";
-import { work } from "./work";
 
 export type { Chapter, DiagramId, EssenceBlock, StripKind } from "./types";
-export { GROUP_ORDER, LIFE_NAMES, WORK_NAMES } from "./types";
+export { GROUP_ORDER, STRIPS } from "./types";
 
-export const chapters: Chapter[] = [...map, ...origin, ...life, ...work, ...close];
+export const chapters: Chapter[] = [
+  ...map,
+  ...foundation,
+  ...survival,
+  ...mating,
+  ...family,
+  ...group,
+  ...close,
+];
 
 export function findChapter(slug: string) {
   return chapters.find((chapter) => chapter.slug === slug);
