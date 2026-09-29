@@ -57,7 +57,17 @@ export function PreviewDialog() {
                 key={preview.href}
                 src={preview.href}
                 title={`${preview.book} · ${preview.title}`}
-                onLoad={() => setLoaded(true)}
+                onLoad={(event) => {
+                  setLoaded(true);
+                  // Focus moves into the frame, so Escape never reaches the dialog unless we listen there too.
+                  try {
+                    event.currentTarget.contentWindow?.addEventListener("keydown", (key) => {
+                      if (key.key === "Escape") setPreview(null);
+                    });
+                  } catch {
+                    /* cross-origin frame: the close button still works */
+                  }
+                }}
                 className={`absolute inset-0 size-full border-0 transition-opacity ${loaded ? "opacity-100" : "opacity-0"}`}
               />
             </div>
