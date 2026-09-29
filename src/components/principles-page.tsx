@@ -1,5 +1,6 @@
 import room from "@/data/room.json";
 import caigentan from "@/data/caigentan.json";
+import sanshiliuji from "@/data/sanshiliuji.json";
 import {
   candidates,
   dimensions,
@@ -442,13 +443,15 @@ function References() {
         })}
         <div>
           <p className="text-sm">
-            <span className="font-semibold text-ink">杂说 1</span>
+            <span className="font-semibold text-ink">杂说 {ESSAYS.length}</span>
             <span className="font-kai text-base text-muted">　不在十二条佐证里，另外备读</span>
           </p>
           <ul className="mt-3 space-y-3">
-            <li>
-              <CaigentanReference />
-            </li>
+            {ESSAYS.map((book) => (
+              <li key={book.href}>
+                <EssayReference book={book} />
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -456,16 +459,30 @@ function References() {
   );
 }
 
-const CAIGENTAN = {
-  title: "菜根谭",
-  author: "洪应明",
-  href: "https://brianbai1123.github.io/cgt/",
-  accent: "#5a6b3a",
-  blurb: "清刻本五百三十四则，先读原文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
-};
+type EssayEntry = { n: number; section: string; title: string; line: string };
 
-function CaigentanReference() {
-  const book = CAIGENTAN;
+const ESSAYS = [
+  {
+    title: "菜根谭",
+    author: "洪应明",
+    href: "https://brianbai1123.github.io/cgt/",
+    accent: "#5a6b3a",
+    blurb: "清刻本五百三十四则，先读原文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
+    unit: "则",
+    entries: caigentan as EssayEntry[],
+  },
+  {
+    title: "三十六计",
+    author: "佚名",
+    href: "https://brianbai1123.github.io/36/",
+    accent: "#6b4a2f",
+    blurb: "六套三十六计，每计先读原文、注释、译文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
+    unit: "计",
+    entries: sanshiliuji as EssayEntry[],
+  },
+];
+
+function EssayReference({ book }: { book: (typeof ESSAYS)[number] }) {
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-paper">
       <div className="flex gap-4 p-4">
@@ -485,11 +502,13 @@ function CaigentanReference() {
       </div>
       <details className="group border-t border-line">
         <summary className="cursor-pointer list-none px-4 py-2.5 text-sm font-semibold text-pine marker:hidden hover:bg-band/40">
-          <span className="group-open:hidden">展开 {caigentan.length} 则：一句话与所属部分 ↓</span>
+          <span className="group-open:hidden">
+            展开 {book.entries.length} {book.unit}：一句话与所属部分 ↓
+          </span>
           <span className="hidden group-open:inline">收起 ↑</span>
         </summary>
         <ol className="divide-y divide-line border-t border-line">
-          {caigentan.map((entry) => (
+          {book.entries.map((entry) => (
             <li
               key={entry.n}
               className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[14rem_minmax(0,1fr)_4rem]"
