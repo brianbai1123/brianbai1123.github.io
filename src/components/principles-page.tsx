@@ -348,6 +348,9 @@ function PrincipleCard({ p }: { p: Principle }) {
                     <a
                       key={link.href}
                       href={link.href}
+                      data-preview=""
+                      data-preview-title={link.label}
+                      data-preview-book={bookById.get(item.book)?.title}
                       className="font-semibold text-pine underline decoration-line underline-offset-4 hover:decoration-pine"
                     >
                       {link.label}
