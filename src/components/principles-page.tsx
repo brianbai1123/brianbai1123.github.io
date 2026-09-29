@@ -6,6 +6,7 @@ import {
   type BookId,
   type Principle,
 } from "@/content/principles";
+import { inventory } from "@/content/inventory";
 import { LastRead } from "@/components/last-read";
 
 const SHELVES = [
@@ -40,6 +41,19 @@ const bookById = new Map(
 );
 
 const STEPS = ["先理解", "核心观点", "重建逻辑", "简单表达", "检查"] as const;
+
+const entryTitle = new Map(room.entries.map((entry) => [entry.href, entry.title]));
+
+const dimShort = new Map(dimensions.map((d) => [d.id, d.name.slice(0, 2)]));
+
+const citedBy = new Map<string, number[]>();
+for (const p of principles) {
+  for (const link of p.evidence.flatMap((item) => item.links)) {
+    const list = citedBy.get(link.href) ?? [];
+    if (!list.includes(p.n)) list.push(p.n);
+    citedBy.set(link.href, list);
+  }
+}
 
 export function PrinciplesPage() {
   return (
@@ -388,7 +402,9 @@ function References() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 id="references-title" className="font-serif text-2xl text-ink">参考：六本书</h2>
-          <p className="mt-1 text-sm text-muted">上面每一条佐证都出自这里。点开就是原来的网站。</p>
+          <p className="mt-1 text-sm text-muted">
+            上面每一条佐证都出自这里。每本书的条目都能展开：一句话概括、所属维度，以及被哪几条原则引用。点开就是原来的网站。
+          </p>
         </div>
         <LastRead />
       </div>
@@ -403,23 +419,10 @@ function References() {
                 </span>
                 <span className="text-muted">　{shelf.note}</span>
               </p>
-              <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="mt-3 space-y-3">
                 {books.map((book) => (
                   <li key={book.id}>
-                    <a
-                      href={book.href}
-                      className="flex h-full gap-4 rounded-xl border border-line bg-paper p-4 hover:border-pine"
-                    >
-                      <span className="w-1.5 shrink-0 rounded-full" style={{ background: book.accent }} />
-                      <span className="min-w-0">
-                        <span className="block font-serif text-xl text-ink">{book.title}</span>
-                        <span className="block text-xs text-muted">{book.author}</span>
-                        <span className="mt-2 block text-sm leading-relaxed">{book.blurb}</span>
-                        <span className="mt-2 block truncate text-xs text-pine">
-                          {book.href.replace("https://", "")}
-                        </span>
-                      </span>
-                    </a>
+                    <BookReference id={book.id as BookId} />
                   </li>
                 ))}
               </ul>
@@ -428,5 +431,84 @@ function References() {
         })}
       </div>
     </section>
+  );
+}
+
+const UNIT: Record<BookId, string> = {
+  "7habit": "站",
+  ruiprincipal: "站",
+  ep: "站",
+  sunzi: "篇",
+  zhouyi: "卦",
+  lijiu: "条",
+};
+
+function itemLabel(id: BookId, href: string) {
+  const title = entryTitle.get(href) ?? href;
+  if (id === "sunzi" || id === "zhouyi") return `${href.split("/").pop()} ${title}`;
+  return title;
+}
+
+function BookReference({ id }: { id: BookId }) {
+  const book = bookById.get(id)!;
+  const items = inventory[id];
+  return (
+    <div className="overflow-hidden rounded-xl border border-line bg-paper">
+      <div className="flex gap-4 p-4">
+        <span className="w-1.5 shrink-0 rounded-full" style={{ background: book.accent }} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <p>
+              <span className="font-serif text-xl text-ink">{book.title}</span>
+              <span className="ml-2 text-xs text-muted">{book.author}</span>
+            </p>
+            <a href={book.href} className="text-sm font-semibold text-pine hover:underline">
+              {book.href.replace("https://brianbai1123.github.io", "")} →
+            </a>
+          </div>
+          <p className="mt-1 text-sm leading-relaxed">{book.blurb}</p>
+        </div>
+      </div>
+      <details className="group border-t border-line">
+        <summary className="cursor-pointer list-none px-4 py-2.5 text-sm font-semibold text-pine marker:hidden hover:bg-band/40">
+          <span className="group-open:hidden">
+            展开 {items.length} {UNIT[id]}：一句话与维度 ↓
+          </span>
+          <span className="hidden group-open:inline">收起 ↑</span>
+        </summary>
+        <ol className="divide-y divide-line border-t border-line">
+          {items.map((item) => {
+            const cited = citedBy.get(item.href);
+            return (
+              <li
+                key={item.href}
+                className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_13rem]"
+              >
+                <a href={item.href} className="font-semibold text-ink hover:text-pine">
+                  {itemLabel(id, item.href)}
+                </a>
+                <p>{item.line}</p>
+                <p className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+                  <span className="rounded bg-band px-1.5 text-xs text-clay">{dimShort.get(item.dims[0])}</span>
+                  {item.dims[1] ? (
+                    <span className="text-xs text-muted">次：{dimShort.get(item.dims[1])}</span>
+                  ) : null}
+                  {cited?.map((n) => (
+                    <a
+                      key={n}
+                      href={`#p-${n}`}
+                      title={principles[n - 1].title}
+                      className="rounded-full border border-pine/40 px-1.5 text-xs text-pine hover:bg-pine hover:text-paper"
+                    >
+                      第{n}条
+                    </a>
+                  ))}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </details>
+    </div>
   );
 }
