@@ -1,0 +1,432 @@
+import room from "@/data/room.json";
+import {
+  candidates,
+  dimensions,
+  principles,
+  type BookId,
+  type Principle,
+} from "@/content/principles";
+import { LastRead } from "@/components/last-read";
+
+const SHELVES = [
+  { name: "导读", note: "按原书一站一站走，每站读两遍" },
+  { name: "经文卡片", note: "原文、白话、名家对比，可以背" },
+  { name: "索引", note: "扛住了时间的原则，写明失效边界" },
+] as const;
+
+const SHORT: Record<BookId, string> = {
+  "7habit": "七习惯",
+  ruiprincipal: "原则",
+  ep: "进化",
+  sunzi: "孙子",
+  zhouyi: "周易",
+  lijiu: "历久",
+};
+
+const BOOK_IDS: BookId[] = ["7habit", "ruiprincipal", "ep", "sunzi", "zhouyi", "lijiu"];
+
+// The sites' own accents are near-identical dark greens, so the matrix needs its own hues.
+const HUE: Record<BookId, string> = {
+  "7habit": "#3d7a52",
+  ruiprincipal: "#2f5a8a",
+  ep: "#3a8a8f",
+  sunzi: "#a4472b",
+  zhouyi: "#b8872f",
+  lijiu: "#8a3558",
+};
+
+const bookById = new Map(
+  room.books.map((book) => [book.id as BookId, { ...book, accent: HUE[book.id as BookId] }]),
+);
+
+const STEPS = ["先理解", "核心观点", "重建逻辑", "简单表达", "检查"] as const;
+
+export function PrinciplesPage() {
+  return (
+    <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+      <Masthead />
+      <Matrix />
+      <div className="mt-16 grid gap-12 lg:grid-cols-[13rem_minmax(0,1fr)]">
+        <Sidebar />
+        <main className="min-w-0">
+          {dimensions.map((dimension) => {
+            const list = principles.filter((p) => p.dimension === dimension.id);
+            return (
+              <section key={dimension.id} aria-labelledby={`dim-${dimension.id}`} className="mb-16">
+                <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-ink/80 pb-2">
+                  <h2 id={`dim-${dimension.id}`} className="font-serif text-2xl text-ink">
+                    {dimension.name}
+                  </h2>
+                  <p className="text-sm text-muted">{dimension.question}</p>
+                </header>
+                <div className="mt-6 space-y-8">
+                  {list.map((p) => (
+                    <PrincipleCard key={p.n} p={p} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+          <Candidates />
+        </main>
+      </div>
+      <References />
+      <footer className="border-t border-line py-10 text-sm leading-relaxed text-muted">
+        这里是读书人自己的归纳，不代表各书作者的观点，也不替代原书。六本书各自仍是独立的导读或读书卡；每条佐证都能点回原来那一页核对。
+      </footer>
+    </div>
+  );
+}
+
+function Masthead() {
+  const total = room.entries.length;
+  return (
+    <header className="pt-12 pb-10 sm:pt-20">
+      <p className="text-sm font-semibold tracking-[0.2em] text-clay">六本书读下来，反复出现的道理</p>
+      <h1 className="mt-4 font-serif text-5xl leading-tight text-ink sm:text-7xl">
+        <span className="block sm:inline">原则、思想、</span>
+        <span className="text-pine">知与行</span>
+      </h1>
+      <p className="mt-6 max-w-2xl text-lg leading-relaxed">
+        把七个习惯、原则、进化心理学、孙子兵法、周易和历久放在一起读，只留下至少三本书各自独立说过的道理。每一条都按五步讲：先理解，找出核心，重建逻辑，用大白话说一遍，最后留一道自检题。
+      </p>
+      <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
+        {[
+          ["6", "本书"],
+          [String(total), "个条目读过"],
+          [String(principles.length), "条共同原则"],
+          [String(dimensions.length), "个维度"],
+        ].map(([value, label]) => (
+          <div key={label} className="bg-paper px-4 py-4">
+            <dt className="text-xs text-muted">{label}</dt>
+            <dd className="mt-1 font-serif text-3xl text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </header>
+  );
+}
+
+function supportOf(p: Principle) {
+  return new Set(p.evidence.map((item) => item.book));
+}
+
+function Matrix() {
+  return (
+    <section aria-labelledby="matrix-title" className="rounded-2xl border border-line bg-paper p-5 sm:p-8">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="matrix-title" className="font-serif text-2xl text-ink">
+            十二条原则，各由哪几本书撑住
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            从上往下，是从「看清」走到「做成」、再走到「知止」。点一行，跳到那条原则。
+          </p>
+        </div>
+        <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+          {BOOK_IDS.map((id) => (
+            <li key={id} className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full" style={{ background: bookById.get(id)?.accent }} />
+              {bookById.get(id)?.title}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <ol className="mt-5 divide-y divide-line border-y border-line sm:hidden">
+        {principles.map((p) => {
+          const support = supportOf(p);
+          return (
+            <li key={p.n}>
+              <a href={`#p-${p.n}`} className="block py-3">
+                <span className="flex items-baseline gap-2">
+                  <span className="w-5 shrink-0 font-serif text-sm text-muted">{p.n}</span>
+                  <span className="font-semibold text-ink">{p.title}</span>
+                </span>
+                <span className="mt-1.5 flex items-center gap-1.5 pl-7">
+                  {BOOK_IDS.map((id) => (
+                    <span
+                      key={id}
+                      className={`size-3 rounded-full ${support.has(id) ? "" : "border border-line"}`}
+                      style={support.has(id) ? { background: bookById.get(id)?.accent } : undefined}
+                    />
+                  ))}
+                  <span className="ml-1 text-xs text-muted">
+                    {dimensions.find((d) => d.id === p.dimension)?.name} · {support.size} 本
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+
+      <div className="mt-6 hidden sm:block">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="text-xs text-muted">
+              <th scope="col" className="w-28 pb-3 font-semibold">维度</th>
+              <th scope="col" className="pb-3 font-semibold">原则</th>
+              {BOOK_IDS.map((id) => (
+                <th key={id} scope="col" className="w-14 pb-3 text-center font-semibold">
+                  {SHORT[id]}
+                </th>
+              ))}
+              <th scope="col" className="w-14 pb-3 text-right font-semibold">几本</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dimensions.map((dimension) => {
+              const list = principles.filter((p) => p.dimension === dimension.id);
+              return list.map((p, index) => {
+                const support = supportOf(p);
+                return (
+                  <tr key={p.n} className="group border-t border-line">
+                    {index === 0 ? (
+                      <th
+                        scope="rowgroup"
+                        rowSpan={list.length}
+                        className="py-2.5 pr-3 align-top text-xs font-semibold text-clay"
+                      >
+                        {dimension.name}
+                      </th>
+                    ) : null}
+                    <td className="py-2.5 pr-3">
+                      <a href={`#p-${p.n}`} className="flex items-baseline gap-2 text-ink group-hover:text-pine">
+                        <span className="w-5 shrink-0 font-serif text-sm text-muted">{p.n}</span>
+                        <span className="font-semibold">{p.title}</span>
+                      </a>
+                    </td>
+                    {BOOK_IDS.map((id) => (
+                      <td key={id} className="py-2.5 text-center">
+                        {support.has(id) ? (
+                          <span
+                            className="inline-block size-3.5 rounded-full"
+                            style={{ background: bookById.get(id)?.accent }}
+                            title={`${bookById.get(id)?.title} 支持`}
+                          />
+                        ) : (
+                          <span className="inline-block size-3.5 rounded-full border border-line" aria-label="无" />
+                        )}
+                      </td>
+                    ))}
+                    <td className="py-2.5 text-right font-serif text-ink">{support.size}</td>
+                  </tr>
+                );
+              });
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function Sidebar() {
+  return (
+    <nav aria-label="原则目录" className="hidden lg:block">
+      <div className="sticky top-8 space-y-5 text-sm">
+        {dimensions.map((dimension) => (
+          <div key={dimension.id}>
+            <p className="text-xs font-semibold text-clay">{dimension.name}</p>
+            <ul className="mt-1.5 space-y-1">
+              {principles
+                .filter((p) => p.dimension === dimension.id)
+                .map((p) => (
+                  <li key={p.n}>
+                    <a href={`#p-${p.n}`} className="flex gap-2 leading-snug text-muted hover:text-pine">
+                      <span className="w-4 shrink-0 font-serif">{p.n}</span>
+                      <span>{p.title}</span>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+        <div className="space-y-1 border-t border-line pt-4">
+          <a href="#candidates" className="block text-muted hover:text-pine">还在观察的候选</a>
+          <a href="#references" className="block text-muted hover:text-pine">参考：六本书</a>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function Step({ index, children }: { index: number; children: React.ReactNode }) {
+  return (
+    <div className="grid gap-1 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-4">
+      <p className="pt-0.5 text-xs font-semibold tracking-wider text-clay">
+        {index + 1} · {STEPS[index]}
+      </p>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+function PrincipleCard({ p }: { p: Principle }) {
+  return (
+    <article id={`p-${p.n}`} className="scroll-mt-6 rounded-2xl border border-line bg-paper p-5 sm:p-8">
+      <header className="flex items-start gap-4">
+        <span className="font-serif text-5xl leading-none text-pine/25 sm:text-6xl">{p.n}</span>
+        <div className="min-w-0">
+          <h3 className="font-serif text-2xl leading-snug text-ink sm:text-3xl">{p.title}</h3>
+          <ul className="mt-2 flex flex-wrap gap-1.5">
+            {p.evidence.map((item) => (
+              <li
+                key={item.book}
+                className="rounded-full px-2 py-0.5 text-xs font-semibold text-paper"
+                style={{ background: bookById.get(item.book)?.accent }}
+              >
+                {bookById.get(item.book)?.title}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </header>
+
+      <div className="mt-7 space-y-6">
+        <Step index={0}>
+          <p>{p.understand}</p>
+        </Step>
+        <Step index={1}>
+          <p className="border-l-4 border-pine pl-4 font-serif text-xl leading-relaxed text-ink">{p.core}</p>
+        </Step>
+        <Step index={2}>
+          <ol className="space-y-2">
+            {p.logic.map((line, i) => (
+              <li key={i} className="flex gap-3">
+                <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-clay" aria-hidden />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 rounded-lg bg-band/70 px-4 py-2.5 text-sm">
+            <span className="font-semibold text-clay">边界　</span>
+            {p.limits}
+          </p>
+        </Step>
+        <Step index={3}>
+          <p className="rounded-xl bg-pine px-5 py-4 text-paper">{p.plain}</p>
+        </Step>
+        <Step index={4}>
+          <p className="font-semibold text-ink">{p.check}</p>
+        </Step>
+      </div>
+
+      <details className="group mt-7 border-t border-line pt-4">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-pine marker:hidden">
+          <span className="group-open:hidden">看佐证：{p.evidence.length} 本书在哪一页说过 ↓</span>
+          <span className="hidden group-open:inline">收起佐证 ↑</span>
+        </summary>
+        <ul className="mt-4 divide-y divide-line">
+          {p.evidence.map((item) => (
+            <li key={item.book} className="grid gap-1 py-3 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-4">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span className="size-2.5 rounded-full" style={{ background: bookById.get(item.book)?.accent }} />
+                {bookById.get(item.book)?.title}
+              </p>
+              <div className="text-sm">
+                <p className="flex flex-wrap gap-x-3">
+                  {item.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      className="font-semibold text-pine underline decoration-line underline-offset-4 hover:decoration-pine"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </p>
+                <p className="mt-0.5 text-muted">{item.angle}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </article>
+  );
+}
+
+function Candidates() {
+  return (
+    <section id="candidates" aria-labelledby="candidates-title" className="scroll-mt-6">
+      <header className="border-b border-ink/80 pb-2">
+        <h2 id="candidates-title" className="font-serif text-2xl text-ink">还在观察的候选</h2>
+        <p className="mt-1 text-sm text-muted">只有两本书支持，还不算共同原则。以后读到第三本的佐证，再升格。</p>
+      </header>
+      <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+        {candidates.map((candidate) => (
+          <li key={candidate.title} className="rounded-xl border border-dashed border-line p-4">
+            <p className="font-semibold text-ink">{candidate.title}</p>
+            <ul className="mt-2 space-y-1 text-sm">
+              {candidate.links.map((link) => (
+                <li key={link.href} className="flex items-baseline gap-2">
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ background: bookById.get(link.book)?.accent }}
+                  />
+                  <a href={link.href} className="text-pine hover:underline">
+                    {bookById.get(link.book)?.title} · {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function References() {
+  return (
+    <section
+      id="references"
+      aria-labelledby="references-title"
+      className="mt-8 scroll-mt-6 rounded-2xl bg-band/60 px-5 py-10 sm:px-8"
+    >
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="references-title" className="font-serif text-2xl text-ink">参考：六本书</h2>
+          <p className="mt-1 text-sm text-muted">上面每一条佐证都出自这里。点开就是原来的网站。</p>
+        </div>
+        <LastRead />
+      </div>
+      <div className="mt-8 space-y-8">
+        {SHELVES.map((shelf) => {
+          const books = room.books.filter((book) => book.shelf === shelf.name);
+          return (
+            <div key={shelf.name}>
+              <p className="text-sm">
+                <span className="font-semibold text-ink">
+                  {shelf.name} {books.length}
+                </span>
+                <span className="text-muted">　{shelf.note}</span>
+              </p>
+              <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {books.map((book) => (
+                  <li key={book.id}>
+                    <a
+                      href={book.href}
+                      className="flex h-full gap-4 rounded-xl border border-line bg-paper p-4 hover:border-pine"
+                    >
+                      <span className="w-1.5 shrink-0 rounded-full" style={{ background: book.accent }} />
+                      <span className="min-w-0">
+                        <span className="block font-serif text-xl text-ink">{book.title}</span>
+                        <span className="block text-xs text-muted">{book.author}</span>
+                        <span className="mt-2 block text-sm leading-relaxed">{book.blurb}</span>
+                        <span className="mt-2 block truncate text-xs text-pine">
+                          {book.href.replace("https://", "")}
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

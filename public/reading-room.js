@@ -45,7 +45,7 @@
     });
     var home = document.createElement("a");
     home.href = "https://brianbai1123.github.io/";
-    home.textContent = "回到藏书室";
+    home.textContent = "回到原则、思想、知与行";
     home.style.cssText = "display:inline-block;margin-top:.6rem;color:#8a4b32";
     aside.appendChild(home);
     document.body.appendChild(aside);
@@ -56,7 +56,7 @@
     var link = document.createElement("a");
     link.href = "https://brianbai1123.github.io/";
     link.setAttribute("data-reading-room-home", "");
-    link.textContent = "← 回到藏书室";
+    link.textContent = "← 原则、思想、知与行";
     link.style.cssText = [
       "position:fixed",
       "z-index:80",

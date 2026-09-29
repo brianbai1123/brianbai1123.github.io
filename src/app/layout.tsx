@@ -20,10 +20,11 @@ const serif = Noto_Serif_SC({
 
 export const metadata: Metadata = {
   title: {
-    default: "藏书室",
-    template: "%s · 藏书室",
+    default: "原则、思想、知与行",
+    template: "%s · 原则、思想、知与行",
   },
-  description: "六本导读与读书卡的共同入口：按原书读，按卡片背，按历久的索引横着走。",
+  description:
+    "六本书读下来反复出现的十二条原则。每条按五步讲清，并附上七个习惯、原则、进化心理学、孙子兵法、周易和历久里的佐证。",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
