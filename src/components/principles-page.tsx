@@ -44,7 +44,7 @@ const bookById = new Map(
   room.books.map((book) => [book.id as BookId, { ...book, accent: HUE[book.id as BookId] }]),
 );
 
-const STEPS = ["先理解", "核心观点", "重建逻辑", "简单表达", "检查"] as const;
+const STEPS = ["先理解", "核心观点", "逻辑因果链", "简单表达", "检查"] as const;
 
 const entryTitle = new Map(room.entries.map((entry) => [entry.href, entry.title]));
 
@@ -110,7 +110,7 @@ function Masthead() {
         <span className="text-pine">知与行</span>
       </h1>
       <p className="mt-6 max-w-2xl font-kai text-xl leading-relaxed text-ink/90">
-        把七个习惯、原则、进化心理学、孙子兵法、周易和历久放在一起读，只留下至少三本书各自独立说过的道理。每一条都按五步讲：先理解，找出核心，重建逻辑，用大白话说一遍，最后留一道自检题。
+        把七个习惯、原则、进化心理学、孙子兵法、周易和历久放在一起读，只留下至少三本书各自独立说过的道理。每一条都按五步讲：先理解，找出核心，理出逻辑因果链，用大白话说一遍，最后留一道自检题。
       </p>
       <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
         {[
@@ -315,14 +315,38 @@ function PrincipleCard({ p }: { p: Principle }) {
           <p className="border-l-4 border-pine pl-4 font-kai text-2xl leading-relaxed text-ink">{p.core}</p>
         </Step>
         <Step index={2}>
-          <ol className="space-y-2">
-            {p.logic.map((line, i) => (
-              <li key={i} className="flex gap-3">
-                <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-clay" aria-hidden />
-                <span>{line}</span>
+          <ol>
+            {p.chain.map((link, i) => (
+              <li key={i}>
+                {link.via ? (
+                  <p className="flex items-center gap-2 py-2 pl-1.5 text-sm font-semibold text-clay">
+                    <span aria-hidden>↓</span>
+                    {link.via}
+                  </p>
+                ) : null}
+                <div className="flex gap-3">
+                  <span className="font-num mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-clay/50 text-sm font-semibold text-clay">
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-ink">{link.claim}</p>
+                    <p className="mt-1 leading-relaxed">{link.detail}</p>
+                  </div>
+                </div>
               </li>
             ))}
           </ol>
+          <div className="mt-4 rounded-lg border border-line px-4 py-3 text-sm">
+            <p className="font-semibold text-clay">如果这条链断了</p>
+            <ul className="mt-1.5 space-y-1">
+              {p.breaks.map((line) => (
+                <li key={line} className="flex gap-2">
+                  <span className="mt-2 size-1 shrink-0 rounded-full bg-clay" aria-hidden />
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
           <p className="mt-3 rounded-lg bg-band/70 px-4 py-2.5 text-sm">
             <span className="font-semibold text-clay">边界　</span>
             {p.limits}

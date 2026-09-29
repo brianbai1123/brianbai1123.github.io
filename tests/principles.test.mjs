@@ -28,7 +28,22 @@ test("the five steps stay short enough to read at a glance", () => {
   for (const p of principles) {
     assert.ok([...p.core].length <= 30, `core ${p.n}`);
     assert.ok([...p.plain].length <= 100, `plain ${p.n}`);
-    assert.ok(p.understand && p.logic.length > 0 && p.limits && p.check, `steps ${p.n}`);
+    assert.ok(p.understand && p.limits && p.check, `steps ${p.n}`);
+  }
+});
+
+test("every principle lays out a full causal chain", () => {
+  for (const p of principles) {
+    assert.ok(p.chain.length >= 7, `chain ${p.n}`);
+    assert.equal(p.chain[0].via, undefined, `first link ${p.n}`);
+    for (const link of p.chain.slice(1)) {
+      assert.ok(link.via, `via ${p.n} ${link.claim}`);
+    }
+    for (const link of p.chain) {
+      assert.ok(link.claim && link.detail.length >= 20, `link ${p.n} ${link.claim}`);
+    }
+    assert.ok(p.chain.at(-1).claim.startsWith("结果"), `result ${p.n}`);
+    assert.ok(p.breaks.length >= 2, `breaks ${p.n}`);
   }
 });
 
