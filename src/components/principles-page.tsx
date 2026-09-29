@@ -439,8 +439,91 @@ function References() {
             </div>
           );
         })}
+        <div>
+          <p className="text-sm">
+            <span className="font-semibold text-ink">杂说 1</span>
+            <span className="font-kai text-base text-muted">　不在十二条佐证里，另外备读</span>
+          </p>
+          <ul className="mt-3 space-y-3">
+            <li>
+              <CaigentanReference />
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
+  );
+}
+
+const CAIGENTAN = {
+  title: "菜根谭",
+  author: "洪应明",
+  href: "https://brianbai1123.github.io/cgt/",
+  accent: "#5a6b3a",
+  blurb: "清刻本五百三十四则，先读原文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
+  parts: [
+    { name: "修身", from: 1, to: 30, line: "先管好自己：守得住本心，才谈得上处世。" },
+    { name: "应酬", from: 31, to: 81, line: "与人相处：宽一分待人，留一步给己。" },
+    { name: "评议", from: 82, to: 130, line: "看人论事：不被表面的得失荣辱带着走。" },
+    { name: "闲适", from: 131, to: 176, line: "闲处安顿：山林花鸟里养出一份从容。" },
+    { name: "概论", from: 177, to: 534, line: "综合总说：修身、处世、观物的道理合在一处。" },
+  ],
+};
+
+function CaigentanReference() {
+  const book = CAIGENTAN;
+  return (
+    <div className="overflow-hidden rounded-xl border border-line bg-paper">
+      <div className="flex gap-4 p-4">
+        <span className="w-1.5 shrink-0 rounded-full" style={{ background: book.accent }} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <p>
+              <span className="font-serif text-xl font-bold text-ink">{book.title}</span>
+              <span className="ml-2 text-xs text-muted">{book.author}</span>
+            </p>
+            <a href={book.href} className="text-sm font-semibold text-pine hover:underline">
+              {book.href.replace("https://brianbai1123.github.io", "")} →
+            </a>
+          </div>
+          <p className="mt-1 font-kai text-base leading-relaxed">{book.blurb}</p>
+        </div>
+      </div>
+      <details className="group border-t border-line">
+        <summary className="cursor-pointer list-none px-4 py-2.5 text-sm font-semibold text-pine marker:hidden hover:bg-band/40">
+          <span className="group-open:hidden">展开 {book.parts.length} 部：一句话与则数 ↓</span>
+          <span className="hidden group-open:inline">收起 ↑</span>
+        </summary>
+        <ol className="divide-y divide-line border-t border-line">
+          {book.parts.map((part) => {
+            const href = `${book.href}${part.from}/`;
+            return (
+              <li
+                key={part.name}
+                className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_13rem]"
+              >
+                <a
+                  href={href}
+                  data-preview=""
+                  data-preview-title={part.name}
+                  data-preview-book={book.title}
+                  className="font-semibold text-ink hover:text-pine"
+                >
+                  {part.name}
+                </a>
+                <p>{part.line}</p>
+                <p className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+                  <span className="rounded bg-band px-1.5 text-xs text-clay">
+                    第{part.from}–{part.to}则
+                  </span>
+                  <span className="text-xs text-muted">共{part.to - part.from + 1}则</span>
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </details>
+    </div>
   );
 }
 
