@@ -1,4 +1,5 @@
 import room from "@/data/room.json";
+import caigentan from "@/data/caigentan.json";
 import {
   candidates,
   dimensions,
@@ -461,13 +462,6 @@ const CAIGENTAN = {
   href: "https://brianbai1123.github.io/cgt/",
   accent: "#5a6b3a",
   blurb: "清刻本五百三十四则，先读原文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
-  parts: [
-    { name: "修身", from: 1, to: 30, line: "先管好自己：守得住本心，才谈得上处世。" },
-    { name: "应酬", from: 31, to: 81, line: "与人相处：宽一分待人，留一步给己。" },
-    { name: "评议", from: 82, to: 130, line: "看人论事：不被表面的得失荣辱带着走。" },
-    { name: "闲适", from: 131, to: 176, line: "闲处安顿：山林花鸟里养出一份从容。" },
-    { name: "概论", from: 177, to: 534, line: "综合总说：修身、处世、观物的道理合在一处。" },
-  ],
 };
 
 function CaigentanReference() {
@@ -491,36 +485,31 @@ function CaigentanReference() {
       </div>
       <details className="group border-t border-line">
         <summary className="cursor-pointer list-none px-4 py-2.5 text-sm font-semibold text-pine marker:hidden hover:bg-band/40">
-          <span className="group-open:hidden">展开 {book.parts.length} 部：一句话与则数 ↓</span>
+          <span className="group-open:hidden">展开 {caigentan.length} 则：一句话与所属部分 ↓</span>
           <span className="hidden group-open:inline">收起 ↑</span>
         </summary>
         <ol className="divide-y divide-line border-t border-line">
-          {book.parts.map((part) => {
-            const href = `${book.href}${part.from}/`;
-            return (
-              <li
-                key={part.name}
-                className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_13rem]"
+          {caigentan.map((entry) => (
+            <li
+              key={entry.n}
+              className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[14rem_minmax(0,1fr)_4rem]"
+            >
+              <a
+                href={`${book.href}${entry.n}/`}
+                data-preview=""
+                data-preview-title={`${entry.n} ${entry.title}`}
+                data-preview-book={book.title}
+                className="font-semibold text-ink hover:text-pine"
               >
-                <a
-                  href={href}
-                  data-preview=""
-                  data-preview-title={part.name}
-                  data-preview-book={book.title}
-                  className="font-semibold text-ink hover:text-pine"
-                >
-                  {part.name}
-                </a>
-                <p>{part.line}</p>
-                <p className="flex flex-wrap items-center gap-1.5 sm:justify-end">
-                  <span className="rounded bg-band px-1.5 text-xs text-clay">
-                    第{part.from}–{part.to}则
-                  </span>
-                  <span className="text-xs text-muted">共{part.to - part.from + 1}则</span>
-                </p>
-              </li>
-            );
-          })}
+                <span className="mr-1.5 font-normal text-clay">{entry.n}</span>
+                {entry.title}
+              </a>
+              <p>{entry.line}</p>
+              <p className="sm:text-right">
+                <span className="rounded bg-band px-1.5 text-xs text-clay">{entry.section}</span>
+              </p>
+            </li>
+          ))}
         </ol>
       </details>
     </div>
