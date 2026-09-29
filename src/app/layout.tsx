@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import { Cormorant_Garamond, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import "lxgw-wenkai-screen-web/lxgwwenkaiscreen/result.css";
 import "./globals.css";
 
 const sans = Noto_Sans_SC({
@@ -11,11 +12,19 @@ const sans = Noto_Sans_SC({
 });
 
 const serif = Noto_Serif_SC({
-  weight: ["600", "700"],
+  weight: ["600", "700", "900"],
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
   preload: false,
+});
+
+const numerals = Cormorant_Garamond({
+  weight: ["500", "600"],
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  variable: "--font-numerals",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +38,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="zh-CN" className={`${sans.variable} ${serif.variable} h-full antialiased`}>
+    <html
+      lang="zh-CN"
+      className={`${sans.variable} ${serif.variable} ${numerals.variable} h-full antialiased`}
+    >
       <body className="min-h-full">{children}</body>
     </html>
   );

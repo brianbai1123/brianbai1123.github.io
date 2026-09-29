@@ -42,6 +42,15 @@ body {
   font-family: var(--font-serif);
 }
 
+.font-kai {
+  font-family: "LXGW WenKai Screen", "Kaiti SC", "STKaiti", "KaiTi", serif;
+}
+
+.font-num {
+  font-family: var(--font-numerals), var(--font-serif), serif;
+  font-variant-numeric: lining-nums;
+}
+
 ::selection {
   background: #d7ebe3;
 }

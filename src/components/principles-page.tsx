@@ -72,7 +72,7 @@ export function PrinciplesPage() {
                   <h2 id={`dim-${dimension.id}`} className="font-serif text-2xl text-ink">
                     {dimension.name}
                   </h2>
-                  <p className="text-sm text-muted">{dimension.question}</p>
+                  <p className="font-kai text-base text-muted">{dimension.question}</p>
                 </header>
                 <div className="mt-6 space-y-8">
                   {list.map((p) => (
@@ -87,7 +87,7 @@ export function PrinciplesPage() {
       </div>
       <References />
       <PreviewDialog />
-      <footer className="border-t border-line py-10 text-sm leading-relaxed text-muted">
+      <footer className="border-t border-line py-10 font-kai text-base leading-relaxed text-muted">
         这里是读书人自己的归纳，不代表各书作者的观点，也不替代原书。六本书各自仍是独立的导读或读书卡；每条佐证都能点回原来那一页核对。
       </footer>
     </div>
@@ -99,11 +99,11 @@ function Masthead() {
   return (
     <header className="pt-12 pb-10 sm:pt-20">
       <p className="text-sm font-semibold tracking-[0.2em] text-clay">六本书读下来，反复出现的道理</p>
-      <h1 className="mt-4 font-serif text-5xl leading-tight text-ink sm:text-7xl">
+      <h1 className="mt-4 font-serif text-5xl font-black leading-tight text-ink sm:text-7xl">
         <span className="block sm:inline">原则、思想、</span>
         <span className="text-pine">知与行</span>
       </h1>
-      <p className="mt-6 max-w-2xl text-lg leading-relaxed">
+      <p className="mt-6 max-w-2xl font-kai text-xl leading-relaxed text-ink/90">
         把七个习惯、原则、进化心理学、孙子兵法、周易和历久放在一起读，只留下至少三本书各自独立说过的道理。每一条都按五步讲：先理解，找出核心，重建逻辑，用大白话说一遍，最后留一道自检题。
       </p>
       <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
@@ -115,7 +115,7 @@ function Masthead() {
         ].map(([value, label]) => (
           <div key={label} className="bg-paper px-4 py-4">
             <dt className="text-xs text-muted">{label}</dt>
-            <dd className="mt-1 font-serif text-3xl text-ink">{value}</dd>
+            <dd className="font-num mt-1 text-4xl font-semibold leading-none text-ink">{value}</dd>
           </div>
         ))}
       </dl>
@@ -156,7 +156,7 @@ function Matrix() {
             <li key={p.n}>
               <a href={`#p-${p.n}`} className="block py-3">
                 <span className="flex items-baseline gap-2">
-                  <span className="w-5 shrink-0 font-serif text-sm text-muted">{p.n}</span>
+                  <span className="font-num w-5 shrink-0 text-base font-semibold italic text-muted">{p.n}</span>
                   <span className="font-semibold text-ink">{p.title}</span>
                 </span>
                 <span className="mt-1.5 flex items-center gap-1.5 pl-7">
@@ -209,7 +209,7 @@ function Matrix() {
                     ) : null}
                     <td className="py-2.5 pr-3">
                       <a href={`#p-${p.n}`} className="flex items-baseline gap-2 text-ink group-hover:text-pine">
-                        <span className="w-5 shrink-0 font-serif text-sm text-muted">{p.n}</span>
+                        <span className="font-num w-5 shrink-0 text-base font-semibold italic text-muted">{p.n}</span>
                         <span className="font-semibold">{p.title}</span>
                       </a>
                     </td>
@@ -226,7 +226,7 @@ function Matrix() {
                         )}
                       </td>
                     ))}
-                    <td className="py-2.5 text-right font-serif text-ink">{support.size}</td>
+                    <td className="font-num py-2.5 text-right text-lg font-semibold text-ink">{support.size}</td>
                   </tr>
                 );
               });
@@ -251,7 +251,7 @@ function Sidebar() {
                 .map((p) => (
                   <li key={p.n}>
                     <a href={`#p-${p.n}`} className="flex gap-2 leading-snug text-muted hover:text-pine">
-                      <span className="w-4 shrink-0 font-serif">{p.n}</span>
+                      <span className="font-num w-4 shrink-0 text-base italic">{p.n}</span>
                       <span>{p.title}</span>
                     </a>
                   </li>
@@ -271,8 +271,9 @@ function Sidebar() {
 function Step({ index, children }: { index: number; children: React.ReactNode }) {
   return (
     <div className="grid gap-1 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-4">
-      <p className="pt-0.5 text-xs font-semibold tracking-wider text-clay">
-        {index + 1} · {STEPS[index]}
+      <p className="flex items-baseline gap-1.5 text-xs font-semibold tracking-wider text-clay">
+        <span className="font-num text-lg italic leading-none">{index + 1}</span>
+        {STEPS[index]}
       </p>
       <div>{children}</div>
     </div>
@@ -283,9 +284,9 @@ function PrincipleCard({ p }: { p: Principle }) {
   return (
     <article id={`p-${p.n}`} className="scroll-mt-6 rounded-2xl border border-line bg-paper p-5 sm:p-8">
       <header className="flex items-start gap-4">
-        <span className="font-serif text-5xl leading-none text-pine/25 sm:text-6xl">{p.n}</span>
+        <span className="font-num text-6xl font-semibold italic leading-none text-pine/30 sm:text-7xl">{p.n}</span>
         <div className="min-w-0">
-          <h3 className="font-serif text-2xl leading-snug text-ink sm:text-3xl">{p.title}</h3>
+          <h3 className="font-serif text-2xl font-bold leading-snug text-ink sm:text-3xl">{p.title}</h3>
           <ul className="mt-2 flex flex-wrap gap-1.5">
             {p.evidence.map((item) => (
               <li
@@ -305,7 +306,7 @@ function PrincipleCard({ p }: { p: Principle }) {
           <p>{p.understand}</p>
         </Step>
         <Step index={1}>
-          <p className="border-l-4 border-pine pl-4 font-serif text-xl leading-relaxed text-ink">{p.core}</p>
+          <p className="border-l-4 border-pine pl-4 font-kai text-2xl leading-relaxed text-ink">{p.core}</p>
         </Step>
         <Step index={2}>
           <ol className="space-y-2">
@@ -322,10 +323,10 @@ function PrincipleCard({ p }: { p: Principle }) {
           </p>
         </Step>
         <Step index={3}>
-          <p className="rounded-xl bg-pine px-5 py-4 text-paper">{p.plain}</p>
+          <p className="rounded-xl bg-pine px-5 py-4 font-kai text-lg leading-relaxed text-paper">{p.plain}</p>
         </Step>
         <Step index={4}>
-          <p className="font-semibold text-ink">{p.check}</p>
+          <p className="font-kai text-lg text-ink">{p.check}</p>
         </Step>
       </div>
 
@@ -373,7 +374,7 @@ function Candidates() {
       <ul className="mt-6 grid gap-4 sm:grid-cols-2">
         {candidates.map((candidate) => (
           <li key={candidate.title} className="rounded-xl border border-dashed border-line p-4">
-            <p className="font-semibold text-ink">{candidate.title}</p>
+            <p className="font-kai text-lg leading-snug text-ink">{candidate.title}</p>
             <ul className="mt-2 space-y-1 text-sm">
               {candidate.links.map((link) => (
                 <li key={link.href} className="flex items-baseline gap-2">
@@ -419,7 +420,7 @@ function References() {
                 <span className="font-semibold text-ink">
                   {shelf.name} {books.length}
                 </span>
-                <span className="text-muted">　{shelf.note}</span>
+                <span className="font-kai text-base text-muted">　{shelf.note}</span>
               </p>
               <ul className="mt-3 space-y-3">
                 {books.map((book) => (
@@ -461,14 +462,14 @@ function BookReference({ id }: { id: BookId }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <p>
-              <span className="font-serif text-xl text-ink">{book.title}</span>
+              <span className="font-serif text-xl font-bold text-ink">{book.title}</span>
               <span className="ml-2 text-xs text-muted">{book.author}</span>
             </p>
             <a href={book.href} className="text-sm font-semibold text-pine hover:underline">
               {book.href.replace("https://brianbai1123.github.io", "")} →
             </a>
           </div>
-          <p className="mt-1 text-sm leading-relaxed">{book.blurb}</p>
+          <p className="mt-1 font-kai text-base leading-relaxed">{book.blurb}</p>
         </div>
       </div>
       <details className="group border-t border-line">
