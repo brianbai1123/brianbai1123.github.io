@@ -1,6 +1,7 @@
 (function () {
   var KEY = "reading-room:last";
   var links = null;
+  var embedded = window.top !== window.self;
 
   function here() {
     return location.origin + location.pathname + location.hash;
@@ -47,12 +48,12 @@
     home.href = "https://brianbai1123.github.io/";
     home.textContent = "回到原则、思想、知与行";
     home.style.cssText = "display:inline-block;margin-top:.6rem;color:#8a4b32";
-    aside.appendChild(home);
+    if (!embedded) aside.appendChild(home);
     document.body.appendChild(aside);
   }
 
   function homeButton() {
-    if (location.pathname === "/" || document.querySelector("[data-reading-room-home]")) return;
+    if (embedded || location.pathname === "/" || document.querySelector("[data-reading-room-home]")) return;
     var link = document.createElement("a");
     link.href = "https://brianbai1123.github.io/";
     link.setAttribute("data-reading-room-home", "");

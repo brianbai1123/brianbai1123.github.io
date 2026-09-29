@@ -8,6 +8,7 @@ import {
 } from "@/content/principles";
 import { inventory } from "@/content/inventory";
 import { LastRead } from "@/components/last-read";
+import { PreviewDialog } from "@/components/preview-dialog";
 
 const SHELVES = [
   { name: "导读", note: "按原书一站一站走，每站读两遍" },
@@ -85,6 +86,7 @@ export function PrinciplesPage() {
         </main>
       </div>
       <References />
+      <PreviewDialog />
       <footer className="border-t border-line py-10 text-sm leading-relaxed text-muted">
         这里是读书人自己的归纳，不代表各书作者的观点，也不替代原书。六本书各自仍是独立的导读或读书卡；每条佐证都能点回原来那一页核对。
       </footer>
@@ -403,7 +405,7 @@ function References() {
         <div>
           <h2 id="references-title" className="font-serif text-2xl text-ink">参考：六本书</h2>
           <p className="mt-1 text-sm text-muted">
-            上面每一条佐证都出自这里。每本书的条目都能展开：一句话概括、所属维度，以及被哪几条原则引用。点开就是原来的网站。
+            上面每一条佐证都出自这里。每本书的条目都能展开：一句话概括、所属维度，以及被哪几条原则引用。点条目名在这一页弹窗里看原文；点右上角的路径，打开原来的网站。
           </p>
         </div>
         <LastRead />
@@ -484,7 +486,13 @@ function BookReference({ id }: { id: BookId }) {
                 key={item.href}
                 className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_13rem]"
               >
-                <a href={item.href} className="font-semibold text-ink hover:text-pine">
+                <a
+                  href={item.href}
+                  data-preview=""
+                  data-preview-title={itemLabel(id, item.href)}
+                  data-preview-book={book.title}
+                  className="font-semibold text-ink hover:text-pine"
+                >
                   {itemLabel(id, item.href)}
                 </a>
                 <p>{item.line}</p>
