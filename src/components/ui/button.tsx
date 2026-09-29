@@ -7,7 +7,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-pine text-paper hover:bg-pine/90",
+        default: "bg-pine text-on-pine hover:bg-pine/90",
         outline:
           "border border-line bg-transparent text-ink hover:bg-band",
       },

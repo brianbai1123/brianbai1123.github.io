@@ -9,6 +9,7 @@ import {
 import { inventory } from "@/content/inventory";
 import { LastRead } from "@/components/last-read";
 import { PreviewDialog } from "@/components/preview-dialog";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const SHELVES = [
   { name: "导读", note: "按原书一站一站走，每站读两遍" },
@@ -97,8 +98,11 @@ export function PrinciplesPage() {
 function Masthead() {
   const total = room.entries.length;
   return (
-    <header className="pt-12 pb-10 sm:pt-20">
-      <p className="text-sm font-semibold tracking-[0.2em] text-clay">六本书读下来，反复出现的道理</p>
+    <header className="pt-6 pb-10 sm:pt-8">
+      <div className="flex justify-end">
+        <ThemeSwitcher />
+      </div>
+      <p className="mt-6 text-sm font-semibold tracking-[0.2em] text-clay sm:mt-10">六本书读下来，反复出现的道理</p>
       <h1 className="mt-4 font-serif text-5xl font-black leading-tight text-ink sm:text-7xl">
         <span className="block sm:inline">原则、思想、</span>
         <span className="text-pine">知与行</span>
@@ -291,7 +295,7 @@ function PrincipleCard({ p }: { p: Principle }) {
             {p.evidence.map((item) => (
               <li
                 key={item.book}
-                className="rounded-full px-2 py-0.5 text-xs font-semibold text-paper"
+                className="rounded-full px-2 py-0.5 text-xs font-semibold text-white"
                 style={{ background: bookById.get(item.book)?.accent }}
               >
                 {bookById.get(item.book)?.title}
@@ -323,7 +327,7 @@ function PrincipleCard({ p }: { p: Principle }) {
           </p>
         </Step>
         <Step index={3}>
-          <p className="rounded-xl bg-pine px-5 py-4 font-kai text-lg leading-relaxed text-paper">{p.plain}</p>
+          <p className="rounded-xl bg-pine px-5 py-4 font-kai text-lg leading-relaxed text-on-pine">{p.plain}</p>
         </Step>
         <Step index={4}>
           <p className="font-kai text-lg text-ink">{p.check}</p>
@@ -510,7 +514,7 @@ function BookReference({ id }: { id: BookId }) {
                       key={n}
                       href={`#p-${n}`}
                       title={principles[n - 1].title}
-                      className="rounded-full border border-pine/40 px-1.5 text-xs text-pine hover:bg-pine hover:text-paper"
+                      className="rounded-full border border-pine/40 px-1.5 text-xs text-pine hover:bg-pine hover:text-on-pine"
                     >
                       第{n}条
                     </a>
