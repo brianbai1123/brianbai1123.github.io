@@ -4,8 +4,11 @@ import sanshiliuji from "@/data/sanshiliuji.json";
 import {
   candidates,
   dimensions,
+  essayHref,
   principles,
   type BookId,
+  type EssayId,
+  type EvidenceBook,
   type Principle,
 } from "@/content/principles";
 import { inventory } from "@/content/inventory";
@@ -19,30 +22,68 @@ const SHELVES = [
   { name: "索引", note: "扛住了时间的原则，写明失效边界" },
 ] as const;
 
-const SHORT: Record<BookId, string> = {
+const SHORT: Record<EvidenceBook, string> = {
   "7habit": "七习惯",
   ruiprincipal: "原则",
   ep: "进化",
   sunzi: "孙子",
   zhouyi: "周易",
   lijiu: "历久",
+  cgt: "菜根",
+  sanshiliuji: "卅六",
 };
 
 const BOOK_IDS: BookId[] = ["7habit", "ruiprincipal", "ep", "sunzi", "zhouyi", "lijiu"];
 
+const MATRIX_IDS: EvidenceBook[] = [...BOOK_IDS, "cgt", "sanshiliuji"];
+
 // The sites' own accents are near-identical dark greens, so the matrix needs its own hues.
-const HUE: Record<BookId, string> = {
+const HUE: Record<EvidenceBook, string> = {
   "7habit": "#3d7a52",
   ruiprincipal: "#2f5a8a",
   ep: "#3a8a8f",
   sunzi: "#a4472b",
   zhouyi: "#b8872f",
   lijiu: "#8a3558",
+  cgt: "#5a6b3a",
+  sanshiliuji: "#6b4a2f",
 };
 
-const bookById = new Map(
-  room.books.map((book) => [book.id as BookId, { ...book, accent: HUE[book.id as BookId] }]),
-);
+type EssayEntry = { n: number; section: string; title: string; line: string };
+
+const ESSAYS: {
+  id: EssayId;
+  title: string;
+  author: string;
+  href: string;
+  blurb: string;
+  unit: string;
+  entries: EssayEntry[];
+}[] = [
+  {
+    id: "cgt",
+    title: "菜根谭",
+    author: "洪应明",
+    href: "https://brianbai1123.github.io/cgt/",
+    blurb: "清刻本五百三十四则，先读原文，再按五步讲开：先理解、找核心、理逻辑因果链、白话说、自检。",
+    unit: "则",
+    entries: caigentan as EssayEntry[],
+  },
+  {
+    id: "sanshiliuji",
+    title: "三十六计",
+    author: "佚名",
+    href: "https://brianbai1123.github.io/36/",
+    blurb: "六套三十六计，每计先读原文、注释、译文，再按五步讲开：先理解、找核心、理逻辑因果链、白话说、自检。",
+    unit: "计",
+    entries: sanshiliuji as EssayEntry[],
+  },
+];
+
+const bookById = new Map<EvidenceBook, { title: string; author: string; href: string; blurb: string; accent: string }>([
+  ...room.books.map((book) => [book.id as BookId, { ...book, accent: HUE[book.id as BookId] }] as const),
+  ...ESSAYS.map((book) => [book.id, { ...book, accent: HUE[book.id] }] as const),
+]);
 
 const STEPS = ["先理解", "核心观点", "逻辑因果链", "简单表达", "检查"] as const;
 
@@ -110,7 +151,7 @@ function Masthead() {
         <span className="text-pine">知与行</span>
       </h1>
       <p className="mt-6 max-w-2xl font-kai text-xl leading-relaxed text-ink/90">
-        把七个习惯、原则、进化心理学、孙子兵法、周易和历久放在一起读，只留下至少三本书各自独立说过的道理。每一条都按五步讲：先理解，找出核心，理出逻辑因果链，用大白话说一遍，最后留一道自检题。
+        把七个习惯、原则、进化心理学、孙子兵法、周易和历久放在一起读，只留下至少三本书各自独立说过的道理。每一条都按五步讲：先理解，找出核心，理出逻辑因果链，用大白话说一遍，最后留一道自检题。后来读的菜根谭和三十六计也补进了佐证；三十六计有两条是从反面印证的。
       </p>
       <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
         {[
@@ -146,7 +187,7 @@ function Matrix() {
           </p>
         </div>
         <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-          {BOOK_IDS.map((id) => (
+          {MATRIX_IDS.map((id) => (
             <li key={id} className="flex items-center gap-1.5">
               <span className="size-2.5 rounded-full" style={{ background: bookById.get(id)?.accent }} />
               {bookById.get(id)?.title}
@@ -166,7 +207,7 @@ function Matrix() {
                   <span className="font-semibold text-ink">{p.title}</span>
                 </span>
                 <span className="mt-1.5 flex items-center gap-1.5 pl-7">
-                  {BOOK_IDS.map((id) => (
+                  {MATRIX_IDS.map((id) => (
                     <span
                       key={id}
                       className={`size-3 rounded-full ${support.has(id) ? "" : "border border-line"}`}
@@ -189,7 +230,7 @@ function Matrix() {
             <tr className="text-xs text-muted">
               <th scope="col" className="w-28 pb-3 font-semibold">维度</th>
               <th scope="col" className="pb-3 font-semibold">原则</th>
-              {BOOK_IDS.map((id) => (
+              {MATRIX_IDS.map((id) => (
                 <th key={id} scope="col" className="w-14 pb-3 text-center font-semibold">
                   {SHORT[id]}
                 </th>
@@ -219,7 +260,7 @@ function Matrix() {
                         <span className="font-semibold">{p.title}</span>
                       </a>
                     </td>
-                    {BOOK_IDS.map((id) => (
+                    {MATRIX_IDS.map((id) => (
                       <td key={id} className="py-2.5 text-center">
                         {support.has(id) ? (
                           <span
@@ -468,7 +509,7 @@ function References() {
         <div>
           <p className="text-sm">
             <span className="font-semibold text-ink">杂说 {ESSAYS.length}</span>
-            <span className="font-kai text-base text-muted">　不在十二条佐证里，另外备读</span>
+            <span className="font-kai text-base text-muted">　后来读的两本，已补进十二条的佐证</span>
           </p>
           <ul className="mt-3 space-y-3">
             {ESSAYS.map((book) => (
@@ -483,34 +524,11 @@ function References() {
   );
 }
 
-type EssayEntry = { n: number; section: string; title: string; line: string };
-
-const ESSAYS = [
-  {
-    title: "菜根谭",
-    author: "洪应明",
-    href: "https://brianbai1123.github.io/cgt/",
-    accent: "#5a6b3a",
-    blurb: "清刻本五百三十四则，先读原文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
-    unit: "则",
-    entries: caigentan as EssayEntry[],
-  },
-  {
-    title: "三十六计",
-    author: "佚名",
-    href: "https://brianbai1123.github.io/36/",
-    accent: "#6b4a2f",
-    blurb: "六套三十六计，每计先读原文、注释、译文，再按五步讲开：先理解、找核心、重建逻辑、白话说、自检。",
-    unit: "计",
-    entries: sanshiliuji as EssayEntry[],
-  },
-];
-
 function EssayReference({ book }: { book: (typeof ESSAYS)[number] }) {
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-paper">
       <div className="flex gap-4 p-4">
-        <span className="w-1.5 shrink-0 rounded-full" style={{ background: book.accent }} />
+        <span className="w-1.5 shrink-0 rounded-full" style={{ background: HUE[book.id] }} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <p>
@@ -535,10 +553,10 @@ function EssayReference({ book }: { book: (typeof ESSAYS)[number] }) {
           {book.entries.map((entry) => (
             <li
               key={entry.n}
-              className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[14rem_minmax(0,1fr)_4rem]"
+              className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[14rem_minmax(0,1fr)_9rem]"
             >
               <a
-                href={`${book.href}${entry.n}/`}
+                href={essayHref(book.id, entry.n)}
                 data-preview=""
                 data-preview-title={`${entry.n} ${entry.title}`}
                 data-preview-book={book.title}
@@ -548,8 +566,9 @@ function EssayReference({ book }: { book: (typeof ESSAYS)[number] }) {
                 {entry.title}
               </a>
               <p>{entry.line}</p>
-              <p className="sm:text-right">
+              <p className="flex flex-wrap items-center gap-1.5 sm:justify-end">
                 <span className="rounded bg-band px-1.5 text-xs text-clay">{entry.section}</span>
+                <CitedBy href={essayHref(book.id, entry.n)} />
               </p>
             </li>
           ))}
@@ -602,44 +621,45 @@ function BookReference({ id }: { id: BookId }) {
           <span className="hidden group-open:inline">收起 ↑</span>
         </summary>
         <ol className="divide-y divide-line border-t border-line">
-          {items.map((item) => {
-            const cited = citedBy.get(item.href);
-            return (
-              <li
-                key={item.href}
-                className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_13rem]"
+          {items.map((item) => (
+            <li
+              key={item.href}
+              className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_13rem]"
+            >
+              <a
+                href={item.href}
+                data-preview=""
+                data-preview-title={itemLabel(id, item.href)}
+                data-preview-book={book.title}
+                className="font-semibold text-ink hover:text-pine"
               >
-                <a
-                  href={item.href}
-                  data-preview=""
-                  data-preview-title={itemLabel(id, item.href)}
-                  data-preview-book={book.title}
-                  className="font-semibold text-ink hover:text-pine"
-                >
-                  {itemLabel(id, item.href)}
-                </a>
-                <p>{item.line}</p>
-                <p className="flex flex-wrap items-center gap-1.5 sm:justify-end">
-                  <span className="rounded bg-band px-1.5 text-xs text-clay">{dimShort.get(item.dims[0])}</span>
-                  {item.dims[1] ? (
-                    <span className="text-xs text-muted">次：{dimShort.get(item.dims[1])}</span>
-                  ) : null}
-                  {cited?.map((n) => (
-                    <a
-                      key={n}
-                      href={`#p-${n}`}
-                      title={principles[n - 1].title}
-                      className="rounded-full border border-pine/40 px-1.5 text-xs text-pine hover:bg-pine hover:text-on-pine"
-                    >
-                      第{n}条
-                    </a>
-                  ))}
-                </p>
-              </li>
-            );
-          })}
+                {itemLabel(id, item.href)}
+              </a>
+              <p>{item.line}</p>
+              <p className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+                <span className="rounded bg-band px-1.5 text-xs text-clay">{dimShort.get(item.dims[0])}</span>
+                {item.dims[1] ? (
+                  <span className="text-xs text-muted">次：{dimShort.get(item.dims[1])}</span>
+                ) : null}
+                <CitedBy href={item.href} />
+              </p>
+            </li>
+          ))}
         </ol>
       </details>
     </div>
   );
+}
+
+function CitedBy({ href }: { href: string }) {
+  return citedBy.get(href)?.map((n) => (
+    <a
+      key={n}
+      href={`#p-${n}`}
+      title={principles[n - 1].title}
+      className="rounded-full border border-pine/40 px-1.5 text-xs text-pine hover:bg-pine hover:text-on-pine"
+    >
+      第{n}条
+    </a>
+  ));
 }

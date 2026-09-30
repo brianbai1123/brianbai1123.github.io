@@ -14,7 +14,12 @@ export type Dimension = { id: DimensionId; name: string; question: string };
 
 export type Link = { label: string; href: string };
 
-export type Evidence = { book: BookId; links: Link[]; angle: string };
+/** 杂说里的两本：不在六本书的书目清单里，只补进十二条的佐证。 */
+export type EssayId = "cgt" | "sanshiliuji";
+
+export type EvidenceBook = BookId | EssayId;
+
+export type Evidence = { book: EvidenceBook; links: Link[]; angle: string };
 
 /** `via` is the connective from the previous link; the first link has none. */
 export type ChainLink = { via?: string; claim: string; detail: string };
@@ -50,6 +55,14 @@ const gua = (id: number, label: string): Link => ({
   href: `${ROOT}/zhouyi-reading-cards/#gua/${id}`,
 });
 const lijiu = (id: string, label: string): Link => ({ label, href: `${ROOT}/lijiu/#${id}` });
+
+/** 菜根谭第 404 则住在 /0404/：Next 的静态导出把 /404/ 留给了“页面不存在”。 */
+export function essayHref(book: EssayId, n: number) {
+  if (book === "cgt") return `${ROOT}/cgt/${n === 404 ? "0404" : n}/`;
+  return `${ROOT}/36/${n}/`;
+}
+const cgt = (n: number, label: string): Link => ({ label, href: essayHref("cgt", n) });
+const ji = (n: number, label: string): Link => ({ label, href: essayHref("sanshiliuji", n) });
 
 export const dimensions: Dimension[] = [
   { id: "cognition", name: "认知与判断", question: "怎样才算真的看清" },
@@ -105,6 +118,16 @@ export const principles: Principle[] = [
         links: [lijiu("know-what-you-dont-know", "知道自己不知道"), lijiu("listen-to-both-sides", "兼听则明")],
         angle: "古典格言：《论语·为政》、魏征答唐太宗",
       },
+      {
+        book: "cgt",
+        links: [cgt(404, "偏见害人"), cgt(112, "贪心失察，疑心偏颇"), cgt(390, "愿君子责")],
+        angle: "格言：成见和自作聪明最挡路；贪与疑会改写所见；宁被君子批评",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(13, "打草惊蛇"), ji(1, "瞒天过海")],
+        angle: "计谋：情况不明先试探查实；反面，常见则不疑，别人就从你的成见下手",
+      },
     ],
   },
   {
@@ -141,6 +164,11 @@ export const principles: Principle[] = [
       { book: "ruiprincipal", links: [rui("decide", "做决定")], angle: "方法：先学习，再决定，别让情绪抢先" },
       { book: "zhouyi", links: [gua(41, "损"), gua(39, "蹇")], angle: "象：惩忿窒欲；反身修德，先改自己能改的" },
       { book: "lijiu", links: [lijiu("dichotomy-of-control", "分清可控与不可控")], angle: "古典：爱比克泰德《手册》第一章" },
+      {
+        book: "cgt",
+        links: [cgt(322, "言而有信"), cgt(387, "冷眼观物，勿动刚肠")],
+        angle: "格言：不乘喜轻诺，不因醉生嗔，不乘快多事，不因倦鲜终",
+      },
     ],
   },
   {
@@ -186,6 +214,16 @@ export const principles: Principle[] = [
         links: [lijiu("integrity-alone", "慎独"), lijiu("reputation-compounds", "信誉复利")],
         angle: "古典：《中庸》；《论语·为政》",
       },
+      {
+        book: "cgt",
+        links: [cgt(213, "勿罪冥冥"), cgt(268, "不欺不怠"), cgt(251, "不怕小人，怕伪君子")],
+        angle: "格言：明处无错，先要暗处无错；借好人身份做假最伤信任",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(10, "笑里藏刀"), ji(34, "苦肉计")],
+        angle: "计谋（反面印证）：先用表面功夫换信任再下手，所以信任要看记录，不看热情",
+      },
     ],
   },
   {
@@ -221,6 +259,11 @@ export const principles: Principle[] = [
         links: [lijiu("seek-first-to-understand", "先求理解")],
         angle: "古典：《论语·学而》「患不知人也」（这张卡也引了柯维，不重复计算）",
       },
+      {
+        book: "cgt",
+        links: [cgt(43, "启心明通"), cgt(193, "责毋太严，教毋过高")],
+        angle: "格言：从对方已经明白的地方接上去，不硬开他关着的门",
+      },
     ],
   },
   {
@@ -255,6 +298,16 @@ export const principles: Principle[] = [
         book: "lijiu",
         links: [lijiu("reciprocity", "礼尚往来"), lijiu("give-more", "给予")],
         angle: "古典：《礼记·曲礼》；成功的给予者也会保护自己",
+      },
+      {
+        book: "cgt",
+        links: [cgt(185, "路留一步，味让三分"), cgt(386, "趋炎附势，人情之常"), cgt(319, "滥招恶友")],
+        angle: "格言：先让一步；饿来饱走是人情常态；交友别太滥",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(3, "借刀杀人"), ji(28, "上屋抽梯")],
+        angle: "计谋（反面印证）：热心推你去冲，先问谁得利；先给好处再断退路，所以要能退出",
       },
     ],
   },
@@ -296,6 +349,11 @@ export const principles: Principle[] = [
         links: [lijiu("listen-to-both-sides", "兼听则明"), lijiu("choose-company", "选择同伴")],
         angle: "古典及失效条件：要听有独立信息的人；太相似的圈子会变成回音室",
       },
+      {
+        book: "cgt",
+        links: [cgt(279, "辨别是非，认识大体"), cgt(311, "清浊并包")],
+        angle: "格言：不盲从众人，也不独断；容得下不同",
+      },
     ],
   },
   {
@@ -334,6 +392,16 @@ export const principles: Principle[] = [
         book: "lijiu",
         links: [lijiu("incentives", "看激励"), lijiu("choose-company", "选择同伴")],
         angle: "古典：《史记·货殖列传》；《荀子·劝学》",
+      },
+      {
+        book: "cgt",
+        links: [cgt(75, "因势利导"), cgt(287, "穷寇勿追")],
+        angle: "格言：解斗助之以威，惩贪济之以欲；除弊要给人留去路",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(19, "釜底抽薪"), ji(15, "调虎离山")],
+        angle: "计谋：去掉力量的来源；强弱先看所处的位置",
       },
     ],
   },
@@ -375,6 +443,16 @@ export const principles: Principle[] = [
         book: "lijiu",
         links: [lijiu("vital-few", "抓主要矛盾"), lijiu("memento-mori", "记住你会死")],
         angle: "观察与古典：帕累托；《庄子·养生主》",
+      },
+      {
+        book: "cgt",
+        links: [cgt(317, "名位声乐，不可贪图"), cgt(451, "减繁增静")],
+        angle: "格言：虚名和位子会挤掉要事；日子往少里减",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(18, "擒贼擒王"), ji(2, "围魏救赵")],
+        angle: "计谋：抓住最关键的一处；打对方必救的要害",
       },
     ],
   },
@@ -429,6 +507,16 @@ export const principles: Principle[] = [
         links: [rui("five-steps", "五步流程"), rui("together", "写成自己的")],
         angle: "方法：做完一轮看结果再改；少写几条，试用以后再改",
       },
+      {
+        book: "cgt",
+        links: [cgt(370, "铁棒成针"), cgt(416, "善根暗长")],
+        angle: "格言：天天用力；善的好处在暗处长，别因当天看不见就停",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(13, "打草惊蛇"), ji(12, "顺手牵羊")],
+        angle: "计谋：先敲草丛试探再动；小胜积少成多",
+      },
     ],
   },
   {
@@ -479,6 +567,16 @@ export const principles: Principle[] = [
         angle: "象：盛极要防衰；初吉终乱；自满会遮住反馈",
       },
       { book: "ruiprincipal", links: [rui("origin", "从哪里来")], angle: "亲历：成功过的人照样会看错" },
+      {
+        book: "cgt",
+        links: [cgt(337, "处进思退"), cgt(108, "五分安稳，十分溃败"), cgt(250, "念积累难，思倾覆易")],
+        angle: "格言：进步处便思退步；帆扬五分船才稳；享时念积累之难",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(36, "走为上"), ji(1, "瞒天过海")],
+        angle: "计谋：保全实力为上；备周则意怠，防得越周全越容易松",
+      },
     ],
   },
   {
@@ -520,6 +618,11 @@ export const principles: Principle[] = [
         angle: "象：不远而复；恐惧修省；反身修德",
       },
       { book: "7habit", links: [habit("habit-1", "积极主动")], angle: "经验：借弗兰克尔，态度是最后的自由" },
+      {
+        book: "cgt",
+        links: [cgt(51, "败究由来"), cgt(178, "良药苦口，忠言逆耳"), cgt(369, "祸福苦乐，一念之差")],
+        angle: "格言：困穷从起处查由来；逆耳的话是磨刀石；念头一变，处境就变",
+      },
     ],
   },
   {
@@ -565,6 +668,16 @@ export const principles: Principle[] = [
         book: "zhouyi",
         links: [gua(1, "乾"), gua(52, "艮"), gua(60, "节")],
         angle: "象：合乎时机与位置；时止则止；苦节不可贞",
+      },
+      {
+        book: "cgt",
+        links: [cgt(62, "当机立断"), cgt(424, "过满则溢，过刚则折"), cgt(215, "方圆处世")],
+        angle: "格言：鸿未至先援弓，总非当机；满了别再加；世道不同，方圆要换",
+      },
+      {
+        book: "sanshiliuji",
+        links: [ji(9, "隔岸观火"), ji(22, "关门捉贼")],
+        angle: "计谋：顺时而动，不操之过急；不宜急追远袭",
       },
     ],
   },

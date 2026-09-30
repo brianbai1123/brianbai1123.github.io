@@ -1,10 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import room from "../src/data/room.json" with { type: "json" };
-import { candidates, dimensions, principles } from "../src/content/principles.ts";
+import caigentan from "../src/data/caigentan.json" with { type: "json" };
+import sanshiliuji from "../src/data/sanshiliuji.json" with { type: "json" };
+import { candidates, dimensions, essayHref, principles } from "../src/content/principles.ts";
 import { inventory } from "../src/content/inventory.ts";
 
 const pages = new Set(room.entries.map((entry) => entry.href));
+const essayPages = new Set([
+  ...caigentan.map((entry) => essayHref("cgt", entry.n)),
+  ...sanshiliuji.map((entry) => essayHref("sanshiliuji", entry.n)),
+]);
 
 test("twelve principles, numbered in order, cover every dimension", () => {
   assert.deepEqual(
@@ -61,14 +67,37 @@ test("candidates each rest on exactly two books", () => {
   }
 });
 
-test("every evidence link lands on a real page in one of the six books", () => {
-  const links = [
-    ...principles.flatMap((p) => p.evidence.flatMap((item) => item.links)),
-    ...candidates.flatMap((c) => c.links),
-  ];
-  for (const link of links) {
+test("every evidence link lands on a real page", () => {
+  for (const p of principles) {
+    for (const item of p.evidence) {
+      const known = item.book === "cgt" || item.book === "sanshiliuji" ? essayPages : pages;
+      for (const link of item.links) assert.ok(known.has(link.href), link.href);
+    }
+  }
+  for (const link of candidates.flatMap((c) => c.links)) {
     assert.ok(pages.has(link.href), link.href);
   }
+});
+
+test("菜根谭 backs every principle; 三十六计 only where it truly corresponds", () => {
+  const withJi = [];
+  for (const p of principles) {
+    const cgt = p.evidence.find((item) => item.book === "cgt");
+    assert.ok(cgt && cgt.links.length >= 2 && cgt.links.length <= 3, `cgt ${p.n}`);
+    const ji = p.evidence.find((item) => item.book === "sanshiliuji");
+    if (ji) withJi.push(p.n);
+  }
+  assert.deepEqual(withJi, [1, 3, 5, 7, 8, 9, 10, 12]);
+  for (const n of [3, 5]) {
+    const ji = principles[n - 1].evidence.find((item) => item.book === "sanshiliuji");
+    assert.ok(ji.angle.includes("反面"), `reverse ${n}`);
+  }
+});
+
+test("菜根谭 entry 404 links to /0404/, away from the not-found page", () => {
+  assert.equal(essayHref("cgt", 404), "https://brianbai1123.github.io/cgt/0404/");
+  assert.equal(essayHref("cgt", 403), "https://brianbai1123.github.io/cgt/403/");
+  assert.equal(essayHref("sanshiliuji", 36), "https://brianbai1123.github.io/36/36/");
 });
 
 test("the reference inventory lists every entry of every book once", () => {
