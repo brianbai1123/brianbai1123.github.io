@@ -94,6 +94,19 @@ test("菜根谭 backs every principle; 三十六计 only where it truly correspo
   }
 });
 
+test("the causal chains draw on 菜根谭 and 三十六计 wherever they are cited", () => {
+  for (const p of principles) {
+    const text = p.chain.map((link) => link.detail).join("");
+    for (const [book, name] of [
+      ["cgt", "菜根谭"],
+      ["sanshiliuji", "三十六计"],
+    ]) {
+      const cited = p.evidence.some((item) => item.book === book);
+      assert.equal(text.includes(name), cited, `${name} in chain ${p.n}`);
+    }
+  }
+});
+
 test("菜根谭 entry 404 links to /0404/, away from the not-found page", () => {
   assert.equal(essayHref("cgt", 404), "https://brianbai1123.github.io/cgt/0404/");
   assert.equal(essayHref("cgt", 403), "https://brianbai1123.github.io/cgt/403/");
