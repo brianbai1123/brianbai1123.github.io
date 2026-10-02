@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import room from "../src/data/room.json" with { type: "json" };
+import { startThemeLinkSync } from "../src/components/theme-link-sync.tsx";
 import { with7HabitTheme } from "../src/lib/theme-links.ts";
 
 const origin = "https://brianbai1123.github.io";
@@ -31,6 +32,50 @@ test("the principles page mounts theme link sync", async () => {
 test("the theme switcher announces theme changes", async () => {
   const source = await readFile(new URL("../src/components/theme-switcher.tsx", import.meta.url), "utf8");
   assert.match(source, /dispatchEvent\(new CustomEvent\("principles:theme-change",\s*\{\s*detail:\s*id\s*\}\)\)/);
+});
+
+test("theme-change event detail drives link sync when storage is unavailable", () => {
+  const anchor = { href: "https://brianbai1123.github.io/7habit/habit-1/#plain" };
+  const target = new EventTarget();
+  const previous = {
+    document: globalThis.document,
+    localStorage: globalThis.localStorage,
+    location: globalThis.location,
+    MutationObserver: globalThis.MutationObserver,
+    window: globalThis.window,
+  };
+
+  class TestMutationObserver {
+    observe() {}
+    disconnect() {}
+  }
+
+  Object.assign(globalThis, {
+    document: {
+      body: {},
+      querySelectorAll: () => [anchor],
+    },
+    localStorage: {
+      getItem() {
+        throw new Error("storage unavailable");
+      },
+    },
+    location: { origin },
+    MutationObserver: TestMutationObserver,
+    window: target,
+  });
+
+  try {
+    const stop = startThemeLinkSync();
+    target.dispatchEvent(new CustomEvent("principles:theme-change", { detail: "night" }));
+    assert.equal(
+      anchor.href,
+      "https://brianbai1123.github.io/7habit/habit-1/?theme=night#plain",
+    );
+    stop();
+  } finally {
+    Object.assign(globalThis, previous);
+  }
 });
 
 test("six books sit on three shelves", () => {
