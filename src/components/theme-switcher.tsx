@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import type { ThemeId } from "@/lib/theme-links";
 
 export const THEME_KEY = "principles:theme";
 
@@ -9,8 +10,6 @@ const THEMES = [
   { id: "celadon", name: "青瓷", swatch: ["#e5ede9", "#1d4a5c"] },
   { id: "night", name: "夜读", swatch: ["#161412", "#8fc7b0"] },
 ] as const;
-
-type ThemeId = (typeof THEMES)[number]["id"];
 
 function subscribe(onChange: () => void) {
   const observer = new MutationObserver(onChange);
@@ -36,6 +35,7 @@ export function ThemeSwitcher() {
     } catch {
       /* private mode: the choice just won't persist */
     }
+    window.dispatchEvent(new CustomEvent("principles:theme-change", { detail: id }));
   }
 
   return (

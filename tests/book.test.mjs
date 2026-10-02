@@ -1,6 +1,37 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import room from "../src/data/room.json" with { type: "json" };
+import { with7HabitTheme } from "../src/lib/theme-links.ts";
+
+const origin = "https://brianbai1123.github.io";
+
+test("7habit links carry the selected home theme", () => {
+  assert.equal(
+    with7HabitTheme("https://brianbai1123.github.io/7habit/habit-1/#plain", "night", origin),
+    "https://brianbai1123.github.io/7habit/habit-1/?theme=night#plain",
+  );
+  assert.equal(
+    with7HabitTheme("https://brianbai1123.github.io/7habit/path/?from=room#plain", "celadon", origin),
+    "https://brianbai1123.github.io/7habit/path/?from=room&theme=celadon#plain",
+  );
+  assert.equal(with7HabitTheme("https://example.com/7habit/", "night", origin), "https://example.com/7habit/");
+  assert.equal(
+    with7HabitTheme("https://brianbai1123.github.io/cgt/1/", "night", origin),
+    "https://brianbai1123.github.io/cgt/1/",
+  );
+});
+
+test("the principles page mounts theme link sync", async () => {
+  const source = await readFile(new URL("../src/components/principles-page.tsx", import.meta.url), "utf8");
+  assert.match(source, /import\s+\{\s*ThemeLinkSync\s*\}.*theme-link-sync/);
+  assert.match(source, /<ThemeLinkSync\s*\/>/);
+});
+
+test("the theme switcher announces theme changes", async () => {
+  const source = await readFile(new URL("../src/components/theme-switcher.tsx", import.meta.url), "utf8");
+  assert.match(source, /dispatchEvent\(new CustomEvent\("principles:theme-change",\s*\{\s*detail:\s*id\s*\}\)\)/);
+});
 
 test("six books sit on three shelves", () => {
   assert.deepEqual(

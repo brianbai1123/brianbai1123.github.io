@@ -14,6 +14,7 @@ import {
 import { inventory } from "@/content/inventory";
 import { LastRead } from "@/components/last-read";
 import { PreviewDialog } from "@/components/preview-dialog";
+import { ThemeLinkSync } from "@/components/theme-link-sync";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const SHELVES = [
@@ -131,6 +132,7 @@ export function PrinciplesPage() {
       </div>
       <References />
       <PreviewDialog />
+      <ThemeLinkSync />
       <footer className="border-t border-line py-10 font-kai text-base leading-relaxed text-muted">
         这里是读书人自己的归纳，不代表各书作者的观点，也不替代原书。六本书各自仍是独立的导读或读书卡；每条佐证都能点回原来那一页核对。
       </footer>
