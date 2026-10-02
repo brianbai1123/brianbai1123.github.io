@@ -15,15 +15,18 @@ function readTheme(): ThemeId {
 }
 
 export function startThemeLinkSync() {
-  function sync(theme: ThemeId = readTheme()) {
+  let currentTheme = readTheme();
+
+  function sync() {
     for (const anchor of document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
-      const themed = with7HabitTheme(anchor.href, theme, location.origin);
+      const themed = with7HabitTheme(anchor.href, currentTheme, location.origin);
       if (themed !== anchor.href) anchor.href = themed;
     }
   }
 
   function onThemeChange(event: Event) {
-    sync(event instanceof CustomEvent && isThemeId(event.detail) ? event.detail : readTheme());
+    currentTheme = event instanceof CustomEvent && isThemeId(event.detail) ? event.detail : readTheme();
+    sync();
   }
 
   sync();

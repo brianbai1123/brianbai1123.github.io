@@ -36,7 +36,9 @@ test("the theme switcher announces theme changes", async () => {
 
 test("theme-change event detail drives link sync when storage is unavailable", () => {
   const anchor = { href: "https://brianbai1123.github.io/7habit/habit-1/#plain" };
+  const anchors = [anchor];
   const target = new EventTarget();
+  let notifyMutation;
   const previous = {
     document: globalThis.document,
     localStorage: globalThis.localStorage,
@@ -46,6 +48,9 @@ test("theme-change event detail drives link sync when storage is unavailable", (
   };
 
   class TestMutationObserver {
+    constructor(callback) {
+      notifyMutation = callback;
+    }
     observe() {}
     disconnect() {}
   }
@@ -53,7 +58,7 @@ test("theme-change event detail drives link sync when storage is unavailable", (
   Object.assign(globalThis, {
     document: {
       body: {},
-      querySelectorAll: () => [anchor],
+      querySelectorAll: () => anchors,
     },
     localStorage: {
       getItem() {
@@ -68,9 +73,15 @@ test("theme-change event detail drives link sync when storage is unavailable", (
   try {
     const stop = startThemeLinkSync();
     target.dispatchEvent(new CustomEvent("principles:theme-change", { detail: "night" }));
-    assert.equal(
-      anchor.href,
-      "https://brianbai1123.github.io/7habit/habit-1/?theme=night#plain",
+    const added = { href: "https://brianbai1123.github.io/7habit/habit-2/" };
+    anchors.push(added);
+    notifyMutation();
+    assert.deepEqual(
+      anchors.map(({ href }) => href),
+      [
+        "https://brianbai1123.github.io/7habit/habit-1/?theme=night#plain",
+        "https://brianbai1123.github.io/7habit/habit-2/?theme=night",
+      ],
     );
     stop();
   } finally {
