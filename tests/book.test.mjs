@@ -3,24 +3,31 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import room from "../src/data/room.json" with { type: "json" };
 import { startThemeLinkSync } from "../src/components/theme-link-sync.tsx";
-import { with7HabitTheme } from "../src/lib/theme-links.ts";
+import { withReadingTheme } from "../src/lib/theme-links.ts";
 
 const origin = "https://brianbai1123.github.io";
 
-test("7habit links carry the selected home theme", () => {
-  assert.equal(
-    with7HabitTheme("https://brianbai1123.github.io/7habit/habit-1/#plain", "night", origin),
-    "https://brianbai1123.github.io/7habit/habit-1/?theme=night#plain",
-  );
-  assert.equal(
-    with7HabitTheme("https://brianbai1123.github.io/7habit/path/?from=room#plain", "celadon", origin),
-    "https://brianbai1123.github.io/7habit/path/?from=room&theme=celadon#plain",
-  );
-  assert.equal(with7HabitTheme("https://example.com/7habit/", "night", origin), "https://example.com/7habit/");
-  assert.equal(
-    with7HabitTheme("https://brianbai1123.github.io/cgt/1/", "night", origin),
-    "https://brianbai1123.github.io/cgt/1/",
-  );
+test("reading links carry the selected home theme", () => {
+  const paths = [
+    "/7habit/habit-1/#plain",
+    "/ruiprincipal/reality/?from=room#plain",
+    "/ep/cooperate/",
+    "/sunzi/#chapter/3",
+    "/zhouyi-reading-cards/#gua/60",
+    "/lijiu/?from=room#golden-mean",
+    "/cgt/1/",
+    "/36/1/",
+  ];
+
+  for (const path of paths) {
+    const themed = withReadingTheme(`${origin}${path}`, "night", origin);
+    const url = new URL(themed);
+    assert.equal(url.searchParams.get("theme"), "night");
+    assert.equal(url.hash, new URL(`${origin}${path}`).hash);
+    assert.equal(url.searchParams.get("from"), new URL(`${origin}${path}`).searchParams.get("from"));
+  }
+  assert.equal(withReadingTheme(`${origin}/unknown/`, "night", origin), `${origin}/unknown/`);
+  assert.equal(withReadingTheme("https://example.com/cgt/", "night", origin), "https://example.com/cgt/");
 });
 
 test("the principles page mounts theme link sync", async () => {

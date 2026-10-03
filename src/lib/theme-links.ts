@@ -10,10 +10,22 @@ export function isThemeId(value: unknown): value is ThemeId {
   return THEMES.some((theme) => theme.id === value);
 }
 
-export function with7HabitTheme(href: string, theme: ThemeId, origin: string): string {
-  const url = new URL(href);
-  if (url.origin !== origin || !url.pathname.startsWith("/7habit/")) return href;
+const READING_PATHS = [
+  "/7habit/",
+  "/ruiprincipal/",
+  "/ep/",
+  "/sunzi/",
+  "/zhouyi-reading-cards/",
+  "/lijiu/",
+  "/cgt/",
+  "/36/",
+] as const;
 
+export function withReadingTheme(href: string, theme: ThemeId, origin: string): string {
+  const url = new URL(href);
+  if (url.origin !== origin || !READING_PATHS.some((path) => url.pathname.startsWith(path))) {
+    return href;
+  }
   url.searchParams.set("theme", theme);
   return url.href;
 }

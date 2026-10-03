@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { THEME_KEY } from "@/components/theme-switcher";
-import { isThemeId, type ThemeId, with7HabitTheme } from "@/lib/theme-links";
+import { isThemeId, type ThemeId, withReadingTheme } from "@/lib/theme-links";
 
 function readTheme(): ThemeId {
   try {
@@ -19,7 +19,7 @@ export function startThemeLinkSync() {
 
   function sync() {
     for (const anchor of document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
-      const themed = with7HabitTheme(anchor.href, currentTheme, location.origin);
+      const themed = withReadingTheme(anchor.href, currentTheme, location.origin);
       if (themed !== anchor.href) anchor.href = themed;
     }
   }
