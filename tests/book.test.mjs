@@ -26,8 +26,24 @@ test("reading links carry the selected home theme", () => {
     assert.equal(url.hash, new URL(`${origin}${path}`).hash);
     assert.equal(url.searchParams.get("from"), new URL(`${origin}${path}`).searchParams.get("from"));
   }
-  assert.equal(withReadingTheme(`${origin}/unknown/`, "night", origin), `${origin}/unknown/`);
+  for (const path of ["/unknown/", "/36x/", "/cgtx/", "/sunzi-extra/"]) {
+    assert.equal(withReadingTheme(`${origin}${path}`, "night", origin), `${origin}${path}`);
+  }
   assert.equal(withReadingTheme("https://example.com/cgt/", "night", origin), "https://example.com/cgt/");
+});
+
+test("reading links replace an existing theme with the selected home theme", () => {
+  const themed = withReadingTheme(
+    `${origin}/sunzi/?from=room&theme=paper#chapter/3`,
+    "celadon",
+    origin,
+  );
+  const url = new URL(themed);
+
+  assert.equal(url.searchParams.getAll("theme").length, 1);
+  assert.equal(url.searchParams.get("theme"), "celadon");
+  assert.equal(url.searchParams.get("from"), "room");
+  assert.equal(url.hash, "#chapter/3");
 });
 
 test("the principles page mounts theme link sync", async () => {
